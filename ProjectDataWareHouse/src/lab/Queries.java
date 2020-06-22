@@ -23,7 +23,7 @@ public class Queries {
 		query += title.get(title.size() - 1).toString() + " " + data.get(title.size() - 1) + ") ";
 		System.out.print(query);
 
-//		connect.chonDuLieu(query);
+		connect.chonDuLieu(query);
 	}
 
 	public List<String> getData(List<Object> infor) {
