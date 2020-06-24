@@ -27,7 +27,7 @@ public class MySQLConnection extends DBConnection {
 
 	public static void main(String[] args) throws SQLException {
 		new MySQLConnection("jdbc:mysql://localhost/controldb", "root", "1234567890@").writeLogs();
-		;
+		
 //
 //		for (Config config : conf) {
 //			System.out.println(config.toString());
