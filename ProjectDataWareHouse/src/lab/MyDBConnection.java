@@ -35,12 +35,12 @@ public class MyDBConnection {
 		psmt.executeUpdate(sql);
 	}
 
-//	public int chonDuLieu(String sql) throws SQLException {
-//		Connection connect = connection();
-//		Statement stmt = connect.createStatement();
-//		int rs = stmt.executeUpdate(sql);
-//		return rs;
-//	}
+	public int chonDuLieu(String sql) throws SQLException {
+		Connection connect = connection();
+		Statement stmt = connect.createStatement();
+		int rs = stmt.executeUpdate(sql);
+		return rs;
+	}
 
 	public PreparedStatement dungStatement(String sql) throws SQLException {
 		return connection().prepareStatement(sql);
