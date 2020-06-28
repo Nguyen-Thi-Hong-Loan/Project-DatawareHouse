@@ -1,4 +1,4 @@
-package lab;
+package modal;
 
 import java.io.File;
 import java.util.Properties;

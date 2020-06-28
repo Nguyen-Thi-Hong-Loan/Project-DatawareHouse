@@ -1,4 +1,4 @@
-package lab;
+package modal;
 
 import java.sql.SQLException;
 import java.util.List;
