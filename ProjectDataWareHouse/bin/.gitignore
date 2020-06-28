@@ -1,6 +1,5 @@
-/lab/
-/bug.txt
-/model/
-/modal/
-/connection/
+/log/
+/constant/
+/etl/
+/dao/
 /control/
