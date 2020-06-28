@@ -35,7 +35,7 @@ public class DownloadBySCP {
 
 		CkSsh ssh = new CkSsh();
 
-		// unclock .....
+		// unclock .........
 		CkGlobal ck = new CkGlobal();
 		ck.UnlockBundle("Hi");
 
