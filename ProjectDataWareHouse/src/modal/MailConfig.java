@@ -1,4 +1,4 @@
-package lab;
+package modal;
 
 public class MailConfig {
 	 public static final String HOST_NAME = "smtp.gmail.com";

@@ -49,6 +49,7 @@ public abstract class DBConnection {
 		}
 	}
 
+	
 	public List<Config> loadAllConfs() throws SQLException {
 
 		List<Config> listConfig = new ArrayList<Config>();
