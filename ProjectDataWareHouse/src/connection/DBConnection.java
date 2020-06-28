@@ -39,6 +39,26 @@ public abstract class DBConnection {
 		return conn;
 	}
 
+	@SuppressWarnings("unused")
+	public static Connection getConnection(String db_Name) {
+		Connection con = null;
+		String url = "jdbc:mysql://localhost:3306/" + db_Name;
+		String user = "root";
+		String password = "";
+		try {
+			if (con == null || con.isClosed()) {
+				Class.forName("com.mysql.jdbc.Driver");
+				con = DriverManager.getConnection(url, user, password);
+				return con;
+
+			} else {
+				return con;
+			}
+		} catch (SQLException | ClassNotFoundException e) {
+			return null;
+		}
+	}
+
 	public void close(Connection conn) {
 		if (conn != null) {
 			try {
@@ -49,7 +69,6 @@ public abstract class DBConnection {
 		}
 	}
 
-	
 	public List<Config> loadAllConfs() throws SQLException {
 
 		List<Config> listConfig = new ArrayList<Config>();
