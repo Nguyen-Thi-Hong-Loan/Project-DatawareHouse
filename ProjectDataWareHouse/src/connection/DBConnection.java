@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import control.Config;
+//import control.Config;
 import log.Log;
 
 public abstract class DBConnection {
@@ -48,7 +49,26 @@ public abstract class DBConnection {
 			}
 		}
 	}
+	@SuppressWarnings("unused")
+	public static Connection getConnection(String db_Name) {
+		Connection con = null;
+		String url = "jdbc:mysql://localhost:3306/" + db_Name;
+		String user = "root";
+		String password = "";
+		try {
+			if (con == null || con.isClosed()) {
+				Class.forName("com.mysql.jdbc.Driver");
+				con = DriverManager.getConnection(url, user, password);
+				return con;
 
+			} else {
+				return con;
+			}
+		} catch (SQLException | ClassNotFoundException e) {
+			return null;
+		}
+	}
+// Bài của Loan:
 	public List<Config> loadAllConfs() throws SQLException {
 
 		List<Config> listConfig = new ArrayList<Config>();
@@ -78,7 +98,8 @@ public abstract class DBConnection {
 		close(conn);
 		return listConfig;
 	}
-
+	
+//Bài của Loan
 	public List<Log> getLogs(String sql) throws SQLException {
 
 		List<Log> lstLogs = new ArrayList<>();
