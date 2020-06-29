@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import control.Config;
 import log.Log;
@@ -16,7 +17,7 @@ import modal.WriteBug;
 
 public abstract class DBConnection {
 
-	protected String url = "";
+	protected String url = "jdbc:mysql://localhost:3306/controldb";
 	protected String user = "root";
 	protected String pass = "1234567890@";
 
@@ -33,10 +34,15 @@ public abstract class DBConnection {
 	public Connection getConn() {
 		Connection conn = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(url, user, pass);
+			Properties info = new Properties();
+			info.put("user", user);
+			info.put("password", pass);
 
-			System.out.println("connected");
+			conn = DriverManager.getConnection(url, info);
+
+			if (conn != null) {
+				System.out.println("Successfully connected to MySQL database test");
+			}
 		} catch (Exception e) {
 
 			// viet bug vao file va send mail
@@ -48,7 +54,6 @@ public abstract class DBConnection {
 		return conn;
 	}
 
-	@SuppressWarnings("unused")
 	public static Connection getConnection(String db_Name) {
 		Connection con = null;
 		String url = "jdbc:mysql://localhost:3306/" + db_Name;
@@ -56,9 +61,8 @@ public abstract class DBConnection {
 		String password = "";
 		try {
 			if (con == null || con.isClosed()) {
-				Class.forName("com.mysql.cj.jdbc.Driver");
+				Class.forName("com.mysql.jdbc.Driver");
 				con = DriverManager.getConnection(url, user, password);
-				System.out.println("okkkkkkkkkkkkkkkkkk");
 				return con;
 
 			} else {

@@ -17,25 +17,24 @@ public class DownloadBySCP {
 		try {
 			System.loadLibrary("chilkat");
 		} catch (UnsatisfiedLinkError e) {
+			// viet bug vao file va send mail
 			WriteBug wb = new WriteBug();
 			wb.writeBug(e + "");
 			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
-//			System.err.println("Native code library failed to load.\n" + e);
+
 			System.exit(1);
 		}
 	}
 
 	public DownloadBySCP() {
 		try {
-			listConf = new MySQLConnection("jdbc:mysql://localhost:3306/controldb", "root", "1234567890@")
-					.loadAllConfs();
-//			System.out.println(listConf.size());
+			listConf = new MySQLConnection().loadAllConfs();
 		} catch (SQLException e) {
+			// viet bug vao file va send mail
 			WriteBug wb = new WriteBug();
 			wb.writeBug(e + "");
 			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
 
-//			e.printStackTrace();
 		}
 	}
 
@@ -52,11 +51,10 @@ public class DownloadBySCP {
 
 			boolean success = ssh.Connect(config.getServerSou(), config.getPort());
 			if (!success) {
+				// viet bug vao file va send mail
 				WriteBug wb = new WriteBug();
 				wb.writeBug(ssh.lastErrorText() + "");
 				new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
-
-//				System.out.println(ssh.lastErrorText());
 				return;
 			}
 
@@ -66,21 +64,22 @@ public class DownloadBySCP {
 			// Authenticate using login/password:
 			success = ssh.AuthenticatePw(config.getUserSou(), config.getPassSou());
 			if (!success) {
+
+				// viet bug vao file va send mail
 				WriteBug wb = new WriteBug();
 				wb.writeBug(ssh.lastErrorText() + "");
 				new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
 
-//				System.out.println(ssh.lastErrorText());
 				return;
 			}
 			CkScp scp = new CkScp();
 			success = scp.UseSsh(ssh);
 			if (!success) {
+				// viet bug vao file va send mail
 				WriteBug wb = new WriteBug();
 				wb.writeBug(ssh.lastErrorText() + "");
 				new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
 
-//				System.out.println(ssh.lastErrorText());
 				return;
 			}
 			// download directory
@@ -96,7 +95,6 @@ public class DownloadBySCP {
 				wb.writeBug(ssh.lastErrorText() + "");
 				new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
 
-//				System.out.println(ssh.lastErrorText());
 				return;
 			}
 
@@ -106,9 +104,4 @@ public class DownloadBySCP {
 
 	}
 
-	public static void main(String[] args) {
-		new DownloadBySCP().download("drive.ecepvn.org", 2227, "guest_access", "123456",
-				"/volume1/ECEP/song.nguyen/DW_2020/data", "E:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE");
-
-	}
 }
