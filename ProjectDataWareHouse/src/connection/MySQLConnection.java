@@ -18,7 +18,6 @@ public class MySQLConnection extends DBConnection {
 	}
 
 	public MySQLConnection() {
-		url = URL_CONTROL;
 	}
 
 	public MySQLConnection(String url) {
@@ -26,16 +25,6 @@ public class MySQLConnection extends DBConnection {
 	}
 
 	public static void main(String[] args) throws SQLException {
-//		List<Config> conf = new MySQLConnection("jdbc:mysql//localhost:3306/controldb", "root", "1234567890@")
-//				.loadAllConfs();
-		System.out
-				.println(new MySQLConnection("jdbc:mysql//localhost:3306/controldb", "root", "1234567890@").getConn());
-
-//
-//		for (Config config : conf) {
-//			System.out.println(config.toString());
-//
-//		}
-
+		System.out.println(new MySQLConnection().getConn());
 	}
 }
