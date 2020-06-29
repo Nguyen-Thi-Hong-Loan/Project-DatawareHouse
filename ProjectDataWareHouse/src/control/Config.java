@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import connection.DBConnection;
+import connection.MySQLConnection;
 
 public class Config {
 	// Các trường của Loan
@@ -33,8 +35,9 @@ public class Config {
 	private String variabless;
 
 	public Config() {
-		
+
 	}
+
 	public Config(String condition) {
 		PreparedStatement pst = null;
 		ResultSet rs = null;
@@ -253,9 +256,10 @@ public class Config {
 				+ ", errorDir=" + errorDir + ", variabless=" + variabless + "]";
 	}
 
-	public static void main(String[] args) {
-		Config c = new Config("f_txt");
-		System.out.println(c.toString());
+	public static void main(String[] args) throws SQLException {
+		List<Config> listConf = new MySQLConnection("jdbc:mysql//localhost:3306/controldb", "root", "1234567890@")
+				.loadAllConfs();
+		System.out.println(listConf);
 	}
 
 }

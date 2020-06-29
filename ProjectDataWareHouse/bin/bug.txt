@@ -1,1 +1,2 @@
-file nay chua loi
+NOTICE: java.sql.SQLException: No suitable driver found for jdbc:mysql://localhost:3306/controldb 
+TIME: Mon Jun 29 09:31:06 ICT 2020

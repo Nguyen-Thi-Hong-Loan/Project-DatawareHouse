@@ -1,6 +1,5 @@
 package modal;
 
-import java.io.File;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -67,6 +66,7 @@ public class SendMail {
 
 			System.out.println("Message sent successfully");
 		} catch (MessagingException ex) {
+
 			ex.printStackTrace();
 		}
 

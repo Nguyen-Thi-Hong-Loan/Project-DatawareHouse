@@ -17,17 +17,25 @@ public class DownloadBySCP {
 		try {
 			System.loadLibrary("chilkat");
 		} catch (UnsatisfiedLinkError e) {
-			System.err.println("Native code library failed to load.\n" + e);
+			WriteBug wb = new WriteBug();
+			wb.writeBug(e + "");
+			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
+//			System.err.println("Native code library failed to load.\n" + e);
 			System.exit(1);
 		}
 	}
 
 	public DownloadBySCP() {
 		try {
-			listConf = new MySQLConnection("jdbc:mysql://localhost/controldb", "root", "1234567890@").loadAllConfs();
-			System.out.println(listConf.size());
+			listConf = new MySQLConnection("jdbc:mysql://localhost:3306/controldb", "root", "1234567890@")
+					.loadAllConfs();
+//			System.out.println(listConf.size());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			WriteBug wb = new WriteBug();
+			wb.writeBug(e + "");
+			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
+
+//			e.printStackTrace();
 		}
 	}
 
@@ -44,7 +52,11 @@ public class DownloadBySCP {
 
 			boolean success = ssh.Connect(config.getServerSou(), config.getPort());
 			if (!success) {
-				System.out.println(ssh.lastErrorText());
+				WriteBug wb = new WriteBug();
+				wb.writeBug(ssh.lastErrorText() + "");
+				new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
+
+//				System.out.println(ssh.lastErrorText());
 				return;
 			}
 
@@ -54,24 +66,37 @@ public class DownloadBySCP {
 			// Authenticate using login/password:
 			success = ssh.AuthenticatePw(config.getUserSou(), config.getPassSou());
 			if (!success) {
-				System.out.println(ssh.lastErrorText());
+				WriteBug wb = new WriteBug();
+				wb.writeBug(ssh.lastErrorText() + "");
+				new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
+
+//				System.out.println(ssh.lastErrorText());
 				return;
 			}
 			CkScp scp = new CkScp();
 			success = scp.UseSsh(ssh);
 			if (!success) {
-				System.out.println(ssh.lastErrorText());
+				WriteBug wb = new WriteBug();
+				wb.writeBug(ssh.lastErrorText() + "");
+				new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
+
+//				System.out.println(ssh.lastErrorText());
 				return;
 			}
 			// download directory
 			scp.put_SyncMustMatch(config.getFormatSou());
 			System.out.println(config.getFormatSou());
+
 //		String remotePath = "/volume1/ECEP/song.nguyen/DW_2020/data";
 //		String localPath = "E:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE";
 
 			success = scp.SyncTreeDownload(remotePath, localPath, 2, false);
 			if (!success) {
-				System.out.println(ssh.lastErrorText());
+				WriteBug wb = new WriteBug();
+				wb.writeBug(ssh.lastErrorText() + "");
+				new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
+
+//				System.out.println(ssh.lastErrorText());
 				return;
 			}
 

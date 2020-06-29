@@ -11,6 +11,8 @@ import java.util.List;
 
 import control.Config;
 import log.Log;
+import modal.SendMail;
+import modal.WriteBug;
 
 public abstract class DBConnection {
 
@@ -31,10 +33,18 @@ public abstract class DBConnection {
 	public Connection getConn() {
 		Connection conn = null;
 		try {
-			conn = DriverManager.getConnection(url, user, pass);
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/controldb", "root", "1234567890@");
+
 			System.out.println("connected");
 		} catch (Exception e) {
-			e.printStackTrace();
+			//viet bug vao file va send mail
+			
+			WriteBug wb = new WriteBug();
+			wb.writeBug(e.toString() + " ");
+			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
+
+//			e.printStackTrace();
 		}
 		return conn;
 	}
@@ -47,8 +57,9 @@ public abstract class DBConnection {
 		String password = "";
 		try {
 			if (con == null || con.isClosed()) {
-				Class.forName("com.mysql.jdbc.Driver");
+				Class.forName("com.mysql.cj.jdbc.Driver");
 				con = DriverManager.getConnection(url, user, password);
+				System.out.println("okkkkkkkkkkkkkkkkkk");
 				return con;
 
 			} else {
@@ -72,9 +83,10 @@ public abstract class DBConnection {
 	public List<Config> loadAllConfs() throws SQLException {
 
 		List<Config> listConfig = new ArrayList<Config>();
-		Connection conn = getConn();
-		String selectConfig = "select * from config";
+		Connection conn = getConnection("controldb");
+		String selectConfig = "select * from config;";
 		PreparedStatement ps = conn.prepareStatement(selectConfig);
+		System.out.println("FAILLLLLLL");
 		ResultSet rs = ps.executeQuery();
 
 		while (rs.next()) {
@@ -92,6 +104,13 @@ public abstract class DBConnection {
 			conf.setDBNameDes(rs.getString("DBNameDes"));
 			conf.setUseDes(rs.getString("userDes"));
 			conf.setPassDes(rs.getString("passDes"));
+			conf.setTargetTable(rs.getString("targetTable"));
+
+			conf.setFileType(rs.getString("fileType"));
+			conf.setImportDir(rs.getString("importDir"));
+			conf.setSuccessDir(rs.getString("successDir"));
+			conf.setErrorDir(rs.getString("errorDir"));
+			conf.setVariabless(rs.getString("variabless"));
 
 			listConfig.add(conf);
 		}
