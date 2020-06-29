@@ -28,8 +28,8 @@ public class MySQLConnection extends DBConnection {
 	public static void main(String[] args) throws SQLException {
 //		List<Config> conf = new MySQLConnection("jdbc:mysql//localhost:3306/controldb", "root", "1234567890@")
 //				.loadAllConfs();
-		System.out.println(
-				new MySQLConnection().getConn());
+		System.out
+				.println(new MySQLConnection("jdbc:mysql//localhost:3306/controldb", "root", "1234567890@").getConn());
 
 //
 //		for (Config config : conf) {

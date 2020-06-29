@@ -34,17 +34,16 @@ public abstract class DBConnection {
 		Connection conn = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/controldb", "root", "1234567890@");
+			conn = DriverManager.getConnection(url, user, pass);
 
 			System.out.println("connected");
 		} catch (Exception e) {
-			//viet bug vao file va send mail
-			
+
+			// viet bug vao file va send mail
+
 			WriteBug wb = new WriteBug();
 			wb.writeBug(e.toString() + " ");
 			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
-
-//			e.printStackTrace();
 		}
 		return conn;
 	}
