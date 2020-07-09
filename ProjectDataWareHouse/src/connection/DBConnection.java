@@ -17,12 +17,14 @@ import modal.WriteBug;
 
 public abstract class DBConnection {
 
-	protected String url = "jdbc:mysql://localhost:3306/controldb";
-	protected String user = "root";
-	protected String pass = "1234567890@";
+	protected String url;
+	protected String user;
+	protected String pass;
 
 	public DBConnection() {
-
+		url = "jdbc:mysql://localhost:3306/controldb";
+		user = "root";
+		pass = "1234567890@";
 	}
 
 	public DBConnection(String url, String user, String pass) {
@@ -86,10 +88,9 @@ public abstract class DBConnection {
 	public List<Config> loadAllConfs() throws SQLException {
 
 		List<Config> listConfig = new ArrayList<Config>();
-		Connection conn = getConnection("controldb");
+		Connection conn = getConn();
 		String selectConfig = "select * from config;";
 		PreparedStatement ps = conn.prepareStatement(selectConfig);
-		System.out.println("FAILLLLLLL");
 		ResultSet rs = ps.executeQuery();
 
 		while (rs.next()) {
