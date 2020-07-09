@@ -1,2 +1,2 @@
-NOTICE: java.sql.SQLException: No suitable driver found for jdbc:mysql//localhost:3306/controldb 
-TIME: Mon Jun 29 13:19:54 ICT 2020
+NOTICE: java.sql.SQLException: Column 'variabless' not found.
+TIME: Mon Jul 06 20:12:34 ICT 2020
