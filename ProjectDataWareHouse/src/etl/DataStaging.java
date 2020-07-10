@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
@@ -42,7 +43,7 @@ public class DataStaging {
 		this.action = action;
 	}
 
-	public static void main(String[] args) throws ClassNotFoundException {
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		DataStaging dw = new DataStaging();
 		dw.setConfig_name("f_txt");
 		dw.setAction("ER");
@@ -55,89 +56,91 @@ public class DataStaging {
 		dw.ExtractToDB(dp);
 	}
 
-	public void ExtractToDB(DataProcess dp) throws ClassNotFoundException {
-		Config configuration = new Config(this.config_name);
-		String target_table = configuration.getTargetTable();
-		String file_type = configuration.getFileType();
-		String import_dir = configuration.getImportDir();
-		String delim = configuration.getDelimeterSou();
-		String column_list = configuration.getFieldName();
-		String variabless = configuration.getVariabless();
-		System.out.println(target_table);
-
-		if (!dp.getCdb().tableExist(target_table)) {
-			System.out.println(variabless);
-			dp.getCdb().createTable(target_table, variabless, column_list);
-		}
-		File imp_dir = new File(import_dir);
-		if (imp_dir.exists()) {
-			String extention = "";
-			Log a = new Log();
-			List<Log> listLog = a.getLogsWithStatus("ER");
-			File[] listFile = imp_dir.listFiles();
-			for (File file : listFile) {
-				for (Log log : listLog) {
-					String file_name = file.getName().replaceAll(file_type, "");
-					if (file_name.equals(log.getDataFileName()) && log.getResult().equals("OK")
-							&& log.getActive() == 1) {
-						System.out.println(file.getName());
-						if (file.getName().indexOf(file_type) != -1) {
-							System.out.println(7);
-							String values = "";
-							if (file_type.equals(".txt")) {
-								values = dp.readValuesTXT(file, delim);
-								extention = ".txt";
-							} else if (file_type.equals(".xlsx")) {
-								values = dp.readValuesXLSX(file);
-								extention = ".xlsx";
-							}
-							if (values != null) {
-								String table = "log";
-								String file_status;
-								int config_id = configuration.getIdConf();
-								// time
-								DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-								LocalDateTime now = LocalDateTime.now();
-								String timestamp = dtf.format(now);
-								// count line
-								String stagin_load_count = "";
-								try {
-									stagin_load_count = countLines(file, extention) + "";
-								} catch (InvalidFormatException
-										| org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
-									e.printStackTrace();
+	public void ExtractToDB(DataProcess dp) throws ClassNotFoundException, SQLException {
+//		Config c = new Config();
+		List<Config> lstConf = dp.getCdb().loadAllConfs(this.config_name) ;
+		for (Config configuration : lstConf) {
+			String target_table = configuration.getTargetTable();
+			String file_type = configuration.getFileType();
+			String import_dir = configuration.getImportDir();
+			String delim = configuration.getDelimeterSou();
+			String column_list = configuration.getFieldName();
+			String variabless = configuration.getVariabless();
+			System.out.println(target_table);
+			System.out.println(import_dir);
+			if (!dp.getCdb().tableExist(target_table)) {
+				System.out.println(variabless);
+				dp.getCdb().createTable(target_table, variabless, column_list);
+			}
+			File imp_dir = new File(import_dir);
+			if (imp_dir.exists()) {
+				String extention = "";
+				Log a = new Log();
+				List<Log> listLog = dp.getCdb().getLogsWithStatus("ER");
+				File[] listFile = imp_dir.listFiles();
+				for (File file : listFile) {
+					for (Log log : listLog) {
+						String file_name = file.getName();
+						if (file_name.equals(log.getFileName()) && log.getResult().equals("OK")) {
+							System.out.println(file.getName());
+							if (file.getName().indexOf(file_type) != -1) {
+								System.out.println(7);
+								String values = "";
+								if (file_type.equals(".txt")) {
+									values = dp.readValuesTXT(file, delim);
+									extention = ".txt";
+								} else if (file_type.equals(".xlsx")) {
+									values = dp.readValuesXLSX(file);
+									extention = ".xlsx";
 								}
-								//
-								String target_dir;
+								if (values != null) {
+									String table = "log";
+									String file_status;
+									int config_id = configuration.getIdConf();
+									// time
+									DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+									LocalDateTime now = LocalDateTime.now();
+									String timestamp = dtf.format(now);
+									// count line
+									String stagin_load_count = "";
+									try {
+										stagin_load_count = countLines(file, extention) + "";
+									} catch (InvalidFormatException
+											| org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
+										e.printStackTrace();
+									}
+									//
+									String target_dir;
 
-								if (dp.writeDataToBD(column_list, target_table, values)) {
-									file_status = "SU";
-									dp.getCdb().insertLog(table, file_status, config_id, timestamp, stagin_load_count,
-											file_name);
-									target_dir = configuration.getSuccessDir();
-									if (moveFile(target_dir, file))
-										;
+									if (dp.writeDataToBD(column_list, target_table, values)) {
+										file_status = "SU";
+										dp.getCdb().insertLog(table, file_status, config_id, timestamp,
+												stagin_load_count, file_name);
+										target_dir = configuration.getSuccessDir();
+										if (moveFile(target_dir, file))
+											;
 
-								} else {
-									file_status = "ERR";
-									dp.getCdb().insertLog(table, file_status, config_id, timestamp, stagin_load_count,
-											file_name);
-									target_dir = configuration.getErrorDir();
-									if (moveFile(target_dir, file))
-										;
-
+									} else {
+										file_status = "ERR";
+										dp.getCdb().insertLog(table, file_status, config_id, timestamp,
+												stagin_load_count, file_name);
+										target_dir = configuration.getErrorDir();
+										if (moveFile(target_dir, file));
+									}
 								}
 							}
 						}
 					}
+
 				}
 
+			} else {
+				System.out.println("Path not exists!!!");
+				return;
 			}
 
-		} else {
-			System.out.println("Path not exists!!!");
-			return;
 		}
+
 	}
 
 	private boolean moveFile(String target_dir, File file) {

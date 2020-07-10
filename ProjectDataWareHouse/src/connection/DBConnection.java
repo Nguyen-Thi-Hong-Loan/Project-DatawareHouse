@@ -17,7 +17,7 @@ import modal.WriteBug;
 
 public  class DBConnection {
 
-	
+	@SuppressWarnings("unused")
 	public static Connection getConnection(String db_Name) {
 		Connection con = null;
 		String url = "jdbc:mysql://localhost:3306/" + db_Name;
@@ -40,7 +40,6 @@ public  class DBConnection {
 	public static void main(String[] args) throws SQLException {
 		PreparedStatement pst = DBConnection.getConnection("dbcontrol").prepareStatement("select * from config");
 		ResultSet rs = pst.executeQuery();
-		// int i=rs.
 		rs.last();
 		System.out.println(rs.getRow());
 		rs.beforeFirst();

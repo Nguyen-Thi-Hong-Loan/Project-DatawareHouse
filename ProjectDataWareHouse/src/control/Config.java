@@ -37,54 +37,6 @@ public class Config {
 
 	}
 
-	public Config(String condition) {
-		PreparedStatement pst = null;
-		ResultSet rs = null;
-		String sql = "SELECT * FROM config WHERE configName=?";
-		Connection conn;
-		try {
-			conn = DBConnection.getConnection("dbcontrol");
-			pst = conn.prepareStatement(sql);
-			pst.setString(1, condition);
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				idConf = rs.getInt("idConfig");
-				this.configName = condition;
-				serverSou = rs.getString("serverSou");
-				port = rs.getInt("port");
-				userSou = rs.getString("userSou");
-				passSou = rs.getString("passSou");
-				dirSou = rs.getString("directorySou");
-				fieldName = rs.getString("fieldName");
-				delimeterSou = rs.getString("delimeterSou");
-				formatSou = rs.getString("formatSou");
-				serverDes = rs.getString("serverDes");
-				DBNameDes = rs.getString("DBNameDes");
-				useDes = rs.getString("userDes");
-				passDes = rs.getString("passDes");
-				targetTable = rs.getString("targetTable");
-				fileType = rs.getString("fileType");
-				importDir = rs.getString("importDir");
-				successDir = rs.getString("successDir");
-				errorDir = rs.getString("errorDir");
-				variabless = rs.getString("variabless");
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (pst != null)
-					pst.close();
-				if (rs != null)
-					rs.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-
-		}
-	}
-
 	public int getIdConf() {
 		return idConf;
 	}
