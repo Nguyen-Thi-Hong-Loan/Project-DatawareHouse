@@ -1,6 +1,2 @@
-<<<<<<< HEAD
-file nay chua loi
-=======
-NOTICE: java.sql.SQLException: Column 'variabless' not found.
-TIME: Mon Jul 06 20:12:34 ICT 2020
->>>>>>> af4fd766ea4e8133702829fc7b4bf858553de759
+NOTICE: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES) 
+TIME: Fri Jul 10 18:27:49 ICT 2020
