@@ -1,1 +1,2 @@
-file nay chua loi
+NOTICE: java.sql.SQLException: Column 'variabless' not found.
+TIME: Mon Jul 06 20:12:34 ICT 2020

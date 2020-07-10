@@ -2,14 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="text"/>
-	<classpathentry kind="lib" path="chilkat.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="activation.jar"/>
+	<classpathentry kind="lib" path="chilkat.jar"/>
 	<classpathentry kind="lib" path="mail.jar"/>
-	<classpathentry kind="lib" path="poi-4.1.2.jar"/>
-	<classpathentry kind="lib" path="poi-excelant-4.1.2.jar"/>
-	<classpathentry kind="lib" path="poi-ooxml-4.1.2.jar"/>
-	<classpathentry kind="lib" path="poi-ooxml-schemas-4.1.2.jar"/>
-	<classpathentry kind="lib" path="poi-scratchpad-4.1.2.jar"/>
 	<classpathentry kind="lib" path="commons-codec-1.13.jar"/>
 	<classpathentry kind="lib" path="commons-collections4-4.4.jar"/>
 	<classpathentry kind="lib" path="commons-compress-1.19.jar"/>
@@ -21,6 +17,13 @@
 	<classpathentry kind="lib" path="jaxb-impl-2.3.2.jar"/>
 	<classpathentry kind="lib" path="junit-4.12.jar"/>
 	<classpathentry kind="lib" path="log4j-1.2.17.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="poi-4.1.2.jar"/>
+	<classpathentry kind="lib" path="poi-examples-4.1.2.jar"/>
+	<classpathentry kind="lib" path="poi-excelant-4.1.2.jar"/>
+	<classpathentry kind="lib" path="poi-ooxml-4.1.2.jar"/>
+	<classpathentry kind="lib" path="poi-ooxml-schemas-4.1.2.jar"/>
+	<classpathentry kind="lib" path="poi-scratchpad-4.1.2.jar"/>
+	<classpathentry kind="lib" path="mysql-connector-java-5.1.23-bin.jar"/>
+	<classpathentry kind="lib" path="mysql-connector-java-8.0.11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
