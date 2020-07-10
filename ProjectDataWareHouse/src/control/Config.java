@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import connection.DBConnection;
-import connection.MySQLConnection;
 
 public class Config {
 	// Các trường của Loan
@@ -256,10 +255,5 @@ public class Config {
 				+ ", errorDir=" + errorDir + ", variabless=" + variabless + "]";
 	}
 
-	public static void main(String[] args) throws SQLException {
-		List<Config> listConf = new MySQLConnection("jdbc:mysql//localhost:3306/controldb", "root", "1234567890@")
-				.loadAllConfs();
-		System.out.println(listConf);
-	}
 
 }

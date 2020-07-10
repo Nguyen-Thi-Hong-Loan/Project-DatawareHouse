@@ -18,7 +18,7 @@ import com.chilkatsoft.CkGlobal;
 import com.chilkatsoft.CkScp;
 import com.chilkatsoft.CkSsh;
 
-import connection.MySQLConnection;
+import connection.DBConnection;
 import control.Config;
 
 public class Download {
@@ -104,7 +104,7 @@ public class Download {
 		Connection conn = null;
 		PreparedStatement pr = null;
 		try {
-			conn = new MySQLConnection().getConn();
+			conn = DBConnection.getConnection("dbcontrol");
 			String sql = "select * from config;";
 			pr = conn.prepareStatement(sql);
 			ResultSet rs = pr.executeQuery();
@@ -215,8 +215,8 @@ public class Download {
 //	}
 
 	public static void main(String[] args) {
-//		Download.saveDataFromFTPToLocal();
-		Download.countLine("F:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE\\sinhvien_chieu_nhom4.txt");
+		Download.saveDataFromFTPToLocal();
+//		Download.countLine("F:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE\\sinhvien_chieu_nhom4.txt");
 
 //		List<String> l = new Download().readLsFile("F:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE");
 //		for (String string : l) {
