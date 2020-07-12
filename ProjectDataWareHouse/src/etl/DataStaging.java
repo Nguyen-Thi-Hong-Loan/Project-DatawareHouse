@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +26,7 @@ import dao.ControlDB;
 
 public class DataStaging {
 	private String config_name;
-	private String action;
+	private String state;
 
 	public String getConfig_name() {
 		return config_name;
@@ -35,18 +36,19 @@ public class DataStaging {
 		this.config_name = config_name;
 	}
 
-	public String getAction() {
-		return action;
+	public String getState() {
+		return state;
 	}
 
-	public void setAction(String action) {
-		this.action = action;
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		DataStaging dw = new DataStaging();
 		dw.setConfig_name("f_txt");
-		dw.setAction("ER");
+		dw.setState("ER");
+		;
 		DataProcess dp = new DataProcess();
 		ControlDB cdb = new ControlDB();
 		cdb.setConfig_db_name("dbcontrol");
@@ -57,8 +59,7 @@ public class DataStaging {
 	}
 
 	public void ExtractToDB(DataProcess dp) throws ClassNotFoundException, SQLException {
-//		Config c = new Config();
-		List<Config> lstConf = dp.getCdb().loadAllConfs(this.config_name) ;
+		List<Config> lstConf = dp.getCdb().loadAllConfs(this.config_name);
 		for (Config configuration : lstConf) {
 			String target_table = configuration.getTargetTable();
 			String file_type = configuration.getFileType();
@@ -73,65 +74,62 @@ public class DataStaging {
 				dp.getCdb().createTable(target_table, variabless, column_list);
 			}
 			File imp_dir = new File(import_dir);
-			if (imp_dir.exists()) {
+			Log log = dp.getCdb().getLogsWithStatus(this.state);
+			String file_name = log.getFileName();
+			String sourceFile = import_dir + File.separator + File.separator + file_name;
+			System.out.println(sourceFile);
+			File file = new File(sourceFile);
+			if (file.exists()) {
 				String extention = "";
-				Log a = new Log();
-				List<Log> listLog = dp.getCdb().getLogsWithStatus("ER");
-				File[] listFile = imp_dir.listFiles();
-				for (File file : listFile) {
-					for (Log log : listLog) {
-						String file_name = file.getName();
-						if (file_name.equals(log.getFileName()) && log.getResult().equals("OK")) {
-							System.out.println(file.getName());
-							if (file.getName().indexOf(file_type) != -1) {
-								System.out.println(7);
-								String values = "";
-								if (file_type.equals(".txt")) {
-									values = dp.readValuesTXT(file, delim);
-									extention = ".txt";
-								} else if (file_type.equals(".xlsx")) {
-									values = dp.readValuesXLSX(file);
-									extention = ".xlsx";
-								}
-								if (values != null) {
-									String table = "log";
-									String file_status;
-									int config_id = configuration.getIdConf();
-									// time
-									DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-									LocalDateTime now = LocalDateTime.now();
-									String timestamp = dtf.format(now);
-									// count line
-									String stagin_load_count = "";
-									try {
-										stagin_load_count = countLines(file, extention) + "";
-									} catch (InvalidFormatException
-											| org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
-										e.printStackTrace();
-									}
-									//
-									String target_dir;
 
-									if (dp.writeDataToBD(column_list, target_table, values)) {
-										file_status = "SU";
-										dp.getCdb().insertLog(table, file_status, config_id, timestamp,
-												stagin_load_count, file_name);
-										target_dir = configuration.getSuccessDir();
-										if (moveFile(target_dir, file))
-											;
+				if (log.getResult().equals("OK")) {
+					System.out.println(file.getName());
+					if (file.getName().indexOf(file_type) != -1) {
+						System.out.println(7);
+						String values = "";
+						if (file_type.equals(".txt")) {
+							values = dp.readValuesTXT(file, delim);
+							extention = ".txt";
+						} else if (file_type.equals(".xlsx")) {
+							values = dp.readValuesXLSX(file);
+							extention = ".xlsx";
+						}
+						if (values != null) {
+							String table = "log";
+							String file_status;
+							String result;
+							int config_id = configuration.getIdConf();
+							// time
+							String timestamp = getCurrentTime();
+							// count line
+							String stagin_load_count = "";
+							try {
+								stagin_load_count = countLines(file, extention) + "";
+							} catch (InvalidFormatException
+									| org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
+								e.printStackTrace();
+							}
+							//
+							String target_dir;
 
-									} else {
-										file_status = "ERR";
-										dp.getCdb().insertLog(table, file_status, config_id, timestamp,
-												stagin_load_count, file_name);
-										target_dir = configuration.getErrorDir();
-										if (moveFile(target_dir, file));
-									}
-								}
+							if (dp.writeDataToBD(column_list, target_table, values)) {
+								file_status = "TR";
+								result = "OK";
+								dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
+								target_dir = configuration.getSuccessDir();
+								if (moveFile(target_dir, file))
+									;
+
+							} else {
+								file_status = "Not TR";
+								result = "FAIL";
+								dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
+								target_dir = configuration.getErrorDir();
+								if (moveFile(target_dir, file))
+									;
 							}
 						}
 					}
-
 				}
 
 			} else {
@@ -143,6 +141,14 @@ public class DataStaging {
 
 	}
 
+	// Lay thoi gian hien tai:
+	public String getCurrentTime() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+		return dtf.format(now);
+	}
+
+	// Chuyen file da load thanh cong vao thu muc success:
 	private boolean moveFile(String target_dir, File file) {
 		try {
 			BufferedInputStream bReader = new BufferedInputStream(new FileInputStream(file));
@@ -164,6 +170,7 @@ public class DataStaging {
 		}
 	}
 
+	// Dem so dong cua file do:
 	private int countLines(File file, String extention)
 			throws InvalidFormatException, org.apache.poi.openxml4j.exceptions.InvalidFormatException {
 		int result = 0;

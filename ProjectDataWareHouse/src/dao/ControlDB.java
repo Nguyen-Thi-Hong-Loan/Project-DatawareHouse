@@ -10,6 +10,7 @@ import java.util.List;
 
 import connection.DBConnection;
 import control.Config;
+import control.MyFile;
 import log.Log;
 
 public class ControlDB {
@@ -27,6 +28,11 @@ public class ControlDB {
 	}
 
 	public ControlDB() {
+	}
+
+	// Sua:
+	public ControlDB(String target_db_name) {
+		this.target_db_name = target_db_name;
 	}
 
 	public String getConfig_db_name() {
@@ -89,29 +95,29 @@ public class ControlDB {
 		return listConfig;
 	}
 
-	// Phuong thuc lay log:
-	public List<Log> getLogsWithStatus(String condition) throws SQLException {
-		List<Log> listLog = new ArrayList<Log>();
+	// Phuong thuc lay cac thuoc tinh co trong bang log:
+	public Log getLogsWithStatus(String condition) throws SQLException {
+		// List<Log> listLog = new ArrayList<Log>();
+		Log log = new Log();
 		Connection conn = DBConnection.getConnection("dbcontrol");
 		String selectLog = "select * from log where state=?";
 		PreparedStatement ps = conn.prepareStatement(selectLog);
 		ps.setString(1, condition);
 		ResultSet rs = ps.executeQuery();
-
-		while (rs.next()) {
-			Log log = new Log();
+		rs.last();
+		if (rs.getRow() >= 1) {
+			rs.first();
 			log.setIdLog(rs.getInt("idlog"));
 			log.setIdConfig(rs.getInt("idConfig"));
 			log.setState(rs.getString("state"));
+			log.setResult(rs.getString("result"));
 			log.setNumColumn(rs.getInt("numColumn"));
 			log.setFileName(rs.getString("fileName"));
-			log.setDataFileName(rs.getString("dataFileName"));
-			log.setResult(rs.getString("result"));
-			listLog.add(log);
 		}
-		return listLog;
+		return log;
 	}
 
+	// Kiem tra bang co ton tai hay chua:
 	public boolean tableExist(String table_name) throws ClassNotFoundException {
 		try {
 			DatabaseMetaData dbm = DBConnection.getConnection(this.target_db_name).getMetaData();
@@ -132,6 +138,7 @@ public class ControlDB {
 		return false;
 	}
 
+	// Chen du lieu vao bang trong database staging:
 	public boolean insertValues(String fieldName, String values, String targetTable) throws ClassNotFoundException {
 		sql = "INSERT INTO " + targetTable + "(" + fieldName + ") VALUES " + values;
 		System.out.println(sql);
@@ -155,6 +162,7 @@ public class ControlDB {
 		}
 	}
 
+	// Chen du lieu vao log:
 	public boolean insertLog(String table, String file_status, int config_id, String timestamp,
 			String stagin_load_count, String file_name) throws ClassNotFoundException {
 		sql = "INSERT INTO " + table + "(dataFileName,idConfig,state,numColumn,dateUserInsert) value (?,?,?,?,?)";
@@ -182,22 +190,18 @@ public class ControlDB {
 
 		}
 	}
-	public boolean insertLog1(int configID, String fileName, String fileType, String status, String fileTimeStamp) {
+
+	public boolean updateLogAfterLoadToStaging(String status, String result, String fileTimeStamp, String fileName) {
 		Connection connection;
+		String sql = "UPDATE log SET state=?, result=?, dateLoadToStaging=? WHERE fileName=?";
 		try {
 			connection = DBConnection.getConnection("dbcontrol");
-			PreparedStatement ps1 = connection.prepareStatement("UPDATE data_file SET active=0 WHERE file_name=?");
-			ps1.setString(1, fileName);
+			PreparedStatement ps1 = connection.prepareStatement(sql);
+			ps1.setString(1, status);
+			ps1.setString(2, result);
+			ps1.setString(3, fileTimeStamp);
+			ps1.setString(4, fileName);
 			ps1.executeUpdate();
-			PreparedStatement ps = connection.prepareStatement(
-					"INSERT INTO data_file (config_id, file_name, file_type, status, file_timestamp, active) value (?,?,?,?,?,1)");
-			ps.setInt(1, configID);
-			ps.setString(2, fileName);
-			ps.setString(3, fileName.substring(fileName.indexOf('.') + 1));
-			ps.setString(4, status);
-			ps.setString(5, fileTimeStamp);
-			ps.executeUpdate();
-			connection.close();
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -205,30 +209,7 @@ public class ControlDB {
 		}
 	}
 
-
-	public boolean updateLog(int configID, String fileName, String fileType, String status, String fileTimeStamp) {
-		Connection connection;
-		try {
-			connection = DBConnection.getConnection("dbcontrol");
-			PreparedStatement ps1 = connection.prepareStatement("UPDATE data_file SET active=0 WHERE file_name=?");
-			ps1.setString(1, fileName);
-			ps1.executeUpdate();
-			PreparedStatement ps = connection.prepareStatement(
-					"INSERT INTO data_file (config_id, file_name, file_type, status, file_timestamp, active) value (?,?,?,?,?,1)");
-			ps.setInt(1, configID);
-			ps.setString(2, fileName);
-			ps.setString(3, fileName.substring(fileName.indexOf('.') + 1));
-			ps.setString(4, status);
-			ps.setString(5, fileTimeStamp);
-			ps.executeUpdate();
-			connection.close();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
+	// Tao bang:
 	public boolean createTable(String table_name, String variables, String column_list) throws ClassNotFoundException {
 		sql = "CREATE TABLE " + table_name + " (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,";
 		String[] vari = variables.split(",");
@@ -256,6 +237,27 @@ public class ControlDB {
 			}
 
 		}
+	}
+
+	// Sua:
+	// Phuong thuc loadInFile() load file vao trong table:
+	public int loadInFile(String sourceFile, String targetTable, String delimeter) throws SQLException {
+		sql = "LOAD DATA LOCAL INFILE '" + sourceFile + "' INTO TABLE " + targetTable + "\r\n"
+				+ "FIELDS TERMINATED BY '" + delimeter + "' \r\n" + "ENCLOSED BY '\"' \r\n"
+				+ "LINES TERMINATED BY '\r\n'";
+		Connection conn = DBConnection.getConnection(this.target_db_name);
+		PreparedStatement pst = conn.prepareStatement(sql);
+		System.out.println("LOAD DATA LOCAL INFILE '" + sourceFile + "' INTO TABLE " + targetTable + "\r\n"
+				+ "FIELDS TERMINATED BY '" + delimeter + "' \r\n" + "LINES TERMINATED BY '\\n'" + " IGNORE 1 ROWS");
+		return pst.executeUpdate();
+
+	}
+
+	// Sua:
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		ControlDB cb = new ControlDB("database_staging");
+		Log log = cb.getLogsWithStatus("ER");
+		System.out.println(log.toString());
 	}
 
 }

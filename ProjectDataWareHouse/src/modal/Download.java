@@ -81,8 +81,8 @@ public class Download {
 		scp.put_SyncMustMatch(format);
 		System.out.println(format);
 
-//		String remotePath = "/volume1/ECEP/song.nguyen/DW_2020/data";
-//		String localPath = "E:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE";
+		// String remotePath = "/volume1/ECEP/song.nguyen/DW_2020/data";
+		// String localPath = "E:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE";
 
 		success = scp.SyncTreeDownload(remoteFilePath, local_download_dir, 2, false);
 		if (!success) {
@@ -129,19 +129,21 @@ public class Download {
 					List<String> lsFile = readLsFile(conf.getDirSou());
 					for (String fName : lsFile) {
 
-						String newSql = "insert into log ( idConfig, state, numColumn, fileName, dateUserInsert) "
-								+ "values (?,?,?,?,?)";
+						String newSql = "insert into log ( idConfig, state,result, numColumn, fileName, dateUserInsert) "
+								+ "values (?,?,?,?,?,?)";
 						pr = conn.prepareStatement(newSql);
 
 						int idConfig = conf.getIdConf();
 						String state = "ER";
+						String result = "OK";
 						int numColumn = 0;
 
 						pr.setInt(1, idConfig);
 						pr.setString(2, state);
-						pr.setInt(3, numColumn);
-						pr.setString(4, fName);
-						pr.setTimestamp(5, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+						pr.setString(3, result);
+						pr.setInt(4, numColumn);
+						pr.setString(5, fName);
+						pr.setTimestamp(6, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
 
 						pr.executeUpdate();
 						System.out.println("ok");
@@ -173,13 +175,13 @@ public class Download {
 	}
 
 	// đếm đc file .txt mà thôi
-	
+
 	public static int countLine(String file) {
 		int count = 0;
-//		Scanner console = new Scanner(System.in);
-//
-//		System.out.println("File to be read: ");
-//		String inputFile = console.next();
+		// Scanner console = new Scanner(System.in);
+		//
+		// System.out.println("File to be read: ");
+		// String inputFile = console.next();
 
 		File f = new File(file);
 		try {
@@ -203,26 +205,27 @@ public class Download {
 		}
 		return count;
 	}
-	
-//	public static int countFExcel(String file) {
-//		  Workbook workbook = getWorkbook(file);
-//		  
-//	        // Create sheet
-//	        Sheet sh = workbook.createSheet("Books"); // Create sheet with sheet name
-//	 
-//		int count = sh.getRow(0).getPhysicalNumberOfCells();
-//		return count;
-//	}
+
+	// public static int countFExcel(String file) {
+	// Workbook workbook = getWorkbook(file);
+	//
+	// // Create sheet
+	// Sheet sh = workbook.createSheet("Books"); // Create sheet with sheet name
+	//
+	// int count = sh.getRow(0).getPhysicalNumberOfCells();
+	// return count;
+	// }
 
 	public static void main(String[] args) {
 		Download.saveDataFromFTPToLocal();
-//		Download.countLine("F:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE\\sinhvien_chieu_nhom4.txt");
+		// Download.countLine("F:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE\\sinhvien_chieu_nhom4.txt");
 
-//		List<String> l = new Download().readLsFile("F:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE");
-//		for (String string : l) {
-//			System.out.println(string);
-//
-//		}
+		// List<String> l = new
+		// Download().readLsFile("F:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE");
+		// for (String string : l) {
+		// System.out.println(string);
+		//
+		// }
 	}
 
 }
