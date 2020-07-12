@@ -81,7 +81,7 @@ public class DataStaging {
 			File file = new File(sourceFile);
 			if (file.exists()) {
 				String extention = "";
-			
+
 				if (log.getResult().equals("OK")) {
 					System.out.println(file.getName());
 					if (file.getName().indexOf(file_type) != -1) {
@@ -97,11 +97,10 @@ public class DataStaging {
 						if (values != null) {
 							String table = "log";
 							String file_status;
+							String result;
 							int config_id = configuration.getIdConf();
 							// time
-							DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-							LocalDateTime now = LocalDateTime.now();
-							String timestamp = dtf.format(now);
+							String timestamp = getCurrentTime();
 							// count line
 							String stagin_load_count = "";
 							try {
@@ -114,17 +113,17 @@ public class DataStaging {
 							String target_dir;
 
 							if (dp.writeDataToBD(column_list, target_table, values)) {
-								file_status = "SU";
-								dp.getCdb().insertLog(table, file_status, config_id, timestamp, stagin_load_count,
-										file_name);
+								file_status = "TR";
+								result = "OK";
+								dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
 								target_dir = configuration.getSuccessDir();
 								if (moveFile(target_dir, file))
 									;
 
 							} else {
-								file_status = "ERR";
-								dp.getCdb().insertLog(table, file_status, config_id, timestamp, stagin_load_count,
-										file_name);
+								file_status = "Not TR";
+								result = "FAIL";
+								dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
 								target_dir = configuration.getErrorDir();
 								if (moveFile(target_dir, file))
 									;
@@ -142,6 +141,14 @@ public class DataStaging {
 
 	}
 
+	// Lay thoi gian hien tai:
+	public String getCurrentTime() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+		return dtf.format(now);
+	}
+
+	// Chuyen file da load thanh cong vao thu muc success:
 	private boolean moveFile(String target_dir, File file) {
 		try {
 			BufferedInputStream bReader = new BufferedInputStream(new FileInputStream(file));
@@ -163,6 +170,7 @@ public class DataStaging {
 		}
 	}
 
+	// Dem so dong cua file do:
 	private int countLines(File file, String extention)
 			throws InvalidFormatException, org.apache.poi.openxml4j.exceptions.InvalidFormatException {
 		int result = 0;

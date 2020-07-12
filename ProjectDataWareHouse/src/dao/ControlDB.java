@@ -95,7 +95,7 @@ public class ControlDB {
 		return listConfig;
 	}
 
-	// Phuong thuc lay log:
+	// Phuong thuc lay cac thuoc tinh co trong bang log:
 	public Log getLogsWithStatus(String condition) throws SQLException {
 		// List<Log> listLog = new ArrayList<Log>();
 		Log log = new Log();
@@ -110,10 +110,9 @@ public class ControlDB {
 			log.setIdLog(rs.getInt("idlog"));
 			log.setIdConfig(rs.getInt("idConfig"));
 			log.setState(rs.getString("state"));
+			log.setResult(rs.getString("result"));
 			log.setNumColumn(rs.getInt("numColumn"));
 			log.setFileName(rs.getString("fileName"));
-			log.setDataFileName(rs.getString("dataFileName"));
-			log.setResult(rs.getString("result"));
 		}
 		return log;
 	}
@@ -139,7 +138,7 @@ public class ControlDB {
 		return false;
 	}
 
-	// Chen du lieu vao bang tring database staging:
+	// Chen du lieu vao bang trong database staging:
 	public boolean insertValues(String fieldName, String values, String targetTable) throws ClassNotFoundException {
 		sql = "INSERT INTO " + targetTable + "(" + fieldName + ") VALUES " + values;
 		System.out.println(sql);
@@ -192,22 +191,17 @@ public class ControlDB {
 		}
 	}
 
-	public boolean updateLog(int configID, String fileName, String fileType, String status, String fileTimeStamp) {
+	public boolean updateLogAfterLoadToStaging(String status, String result, String fileTimeStamp, String fileName) {
 		Connection connection;
+		String sql = "UPDATE log SET state=?, result=?, dateLoadToStaging=? WHERE fileName=?";
 		try {
 			connection = DBConnection.getConnection("dbcontrol");
-			PreparedStatement ps1 = connection.prepareStatement("UPDATE data_file SET active=0 WHERE file_name=?");
-			ps1.setString(1, fileName);
+			PreparedStatement ps1 = connection.prepareStatement(sql);
+			ps1.setString(1, status);
+			ps1.setString(2, result);
+			ps1.setString(3, fileTimeStamp);
+			ps1.setString(4, fileName);
 			ps1.executeUpdate();
-			PreparedStatement ps = connection.prepareStatement(
-					"INSERT INTO data_file (config_id, file_name, file_type, status, file_timestamp, active) value (?,?,?,?,?,1)");
-			ps.setInt(1, configID);
-			ps.setString(2, fileName);
-			ps.setString(3, fileName.substring(fileName.indexOf('.') + 1));
-			ps.setString(4, status);
-			ps.setString(5, fileTimeStamp);
-			ps.executeUpdate();
-			connection.close();
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();

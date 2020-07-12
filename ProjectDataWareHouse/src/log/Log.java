@@ -15,12 +15,11 @@ public class Log {
 	private int idLog;
 	private int idConfig;
 	private String state;
+	private String result;
 	private int numColumn;
 	private String fileName;
-	private String dataFileName;
 	private Date dateUserInsertLog;
-	private int active;
-	private String result;
+	private Date dateLoadToStaging;
 
 	public Log() {
 
@@ -38,6 +37,10 @@ public class Log {
 		return state;
 	}
 
+	public String getResult() {
+		return result;
+	}
+
 	public int getNumColumn() {
 		return numColumn;
 	}
@@ -46,20 +49,12 @@ public class Log {
 		return fileName;
 	}
 
-	public String getDataFileName() {
-		return dataFileName;
-	}
-
 	public Date getDateUserInsertLog() {
 		return dateUserInsertLog;
 	}
 
-	public int getActive() {
-		return active;
-	}
-
-	public String getResult() {
-		return result;
+	public Date getDateLoadToStaging() {
+		return dateLoadToStaging;
 	}
 
 	public void setIdLog(int idLog) {
@@ -74,6 +69,10 @@ public class Log {
 		this.state = state;
 	}
 
+	public void setResult(String result) {
+		this.result = result;
+	}
+
 	public void setNumColumn(int numColumn) {
 		this.numColumn = numColumn;
 	}
@@ -82,27 +81,21 @@ public class Log {
 		this.fileName = fileName;
 	}
 
-	public void setDataFileName(String dataFileName) {
-		this.dataFileName = dataFileName;
-	}
-
 	public void setDateUserInsertLog(Date dateUserInsertLog) {
 		this.dateUserInsertLog = dateUserInsertLog;
 	}
 
-	public void setActive(int active) {
-		this.active = active;
-	}
-
-	public void setResult(String result) {
-		this.result = result;
+	public void setDateLoadToStaging(Date dateLoadToStaging) {
+		this.dateLoadToStaging = dateLoadToStaging;
 	}
 
 	@Override
 	public String toString() {
-		return "Log [idLog=" + idLog + ", idConfig=" + idConfig + ", state=" + state + ", numColumn=" + numColumn
-				+ ", fileName=" + fileName + ", dataFileName=" + dataFileName + ", dateUserInsertLog="
-				+ dateUserInsertLog + ", active=" + active + ", result=" + result + "]";
+		return "Log [idLog=" + idLog + ", idConfig=" + idConfig + ", state=" + state + ", result=" + result
+				+ ", numColumn=" + numColumn + ", fileName=" + fileName + ", dateUserInsertLog=" + dateUserInsertLog
+				+ ", dateLoadToStaging=" + dateLoadToStaging + "]";
 	}
+
+	
 
 }
