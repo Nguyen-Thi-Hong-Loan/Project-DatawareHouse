@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -18,6 +22,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import connection.DBConnection;
 import dao.ControlDB;
 
 public class DataProcess {
@@ -71,6 +76,30 @@ public class DataProcess {
 			return null;
 		}
 	}
+	// Lay tat ca cac truong co trong staging:
+		public static ResultSet selectAllField(String db_name, String table_name) {
+			ResultSet rs = null;
+			Connection conn = null;
+			try {
+				conn = DBConnection.getConnection(db_name);
+				String selectConfig = "select * from " + table_name;
+				PreparedStatement ps = conn.prepareStatement(selectConfig);
+				return rs = ps.executeQuery();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			} finally {
+				try {
+					if (rs != null)
+						rs.close();
+					if (conn != null)
+						conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
 
 	public String readValuesXLSX(File s_file) {
 		String values = "";
