@@ -1,30 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-<<<<<<< Updated upstream
     <list default="true" id="5f4d6522-59cb-4a24-b286-77fa5ef1e2b3" name="Default Changelist" comment="" />
-=======
-    <list default="true" id="cb66f332-f2ae-47ff-8e09-bad884a27bd2" name="Default Changelist" comment="" />
->>>>>>> Stashed changes
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-<<<<<<< Updated upstream
   <component name="ProjectId" id="1eqwER99Cin2dw0xPdxWEAPIThz" />
-=======
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="ProjectId" id="1eqv4MNiyNgCDceQs8ZdGkrQ274" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
-    <option name="showLibraryContents" value="true" />
-  </component>
->>>>>>> Stashed changes
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -46,7 +29,6 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-<<<<<<< Updated upstream
       <changelist id="5f4d6522-59cb-4a24-b286-77fa5ef1e2b3" name="Default Changelist" comment="" />
       <created>1595062318806</created>
       <option name="number" value="Default" />
@@ -55,18 +37,4 @@
     </task>
     <servers />
   </component>
-=======
-      <changelist id="cb66f332-f2ae-47ff-8e09-bad884a27bd2" name="Default Changelist" comment="" />
-      <created>1595061745586</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1595061745586</updated>
-      <workItem from="1595061753154" duration="3000" />
-    </task>
-    <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
-  </component>
->>>>>>> Stashed changes
 </project>
