@@ -62,7 +62,7 @@ public class ControlDB {
 	// Phuong thuc lay cac thuoc tinh co trong bang config:
 	public List<Config> loadAllConfs(String condition) throws SQLException {
 		List<Config> listConfig = new ArrayList<Config>();
-		Connection conn = DBConnection.getConnection("dbcontrol");
+		Connection conn = DBConnection.getConnection("controldb");
 		String selectConfig = "select * from config where configName=?";
 		PreparedStatement ps = conn.prepareStatement(selectConfig);
 		ps.setString(1, condition);
@@ -99,7 +99,7 @@ public class ControlDB {
 	public Log getLogsWithStatus(String condition) throws SQLException {
 		// List<Log> listLog = new ArrayList<Log>();
 		Log log = new Log();
-		Connection conn = DBConnection.getConnection("dbcontrol");
+		Connection conn = DBConnection.getConnection("controldb");
 		String selectLog = "select * from log where state=?";
 		PreparedStatement ps = conn.prepareStatement(selectLog);
 		ps.setString(1, condition);
@@ -118,25 +118,25 @@ public class ControlDB {
 	}
 
 	// Kiem tra bang co ton tai hay chua:
-	public boolean tableExist(String table_name) throws ClassNotFoundException {
-		try {
-			DatabaseMetaData dbm = DBConnection.getConnection(this.target_db_name).getMetaData();
-			ResultSet tables = dbm.getTables(null, null, table_name, null);
-			try {
-				if (tables.next()) {
-					return true;
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return false;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-
-		return false;
-	}
+//	public boolean tableExist(String table_name) throws ClassNotFoundException {
+//		try {
+//			DatabaseMetaData dbm = DBConnection.getConnection(this.target_db_name).getMetaData();
+//			ResultSet tables = dbm.getTables(null, null, table_name, null);
+//			try {
+//				if (tables.next()) {
+//					return true;
+//				}
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//				return false;
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			return false;
+//		}
+//
+//		return false;
+//	}
 
 	// Chen du lieu vao bang trong database staging:
 	public boolean insertValues(String fieldName, String values, String targetTable) throws ClassNotFoundException {
@@ -195,7 +195,7 @@ public class ControlDB {
 		Connection connection;
 		String sql = "UPDATE log SET state=?, result=?, dateLoadToStaging=? WHERE fileName=?";
 		try {
-			connection = DBConnection.getConnection("dbcontrol");
+			connection = DBConnection.getConnection("controldb");
 			PreparedStatement ps1 = connection.prepareStatement(sql);
 			ps1.setString(1, status);
 			ps1.setString(2, result);
@@ -209,35 +209,35 @@ public class ControlDB {
 		}
 	}
 
-	// Tao bang:
-	public boolean createTable(String table_name, String variables, String column_list) throws ClassNotFoundException {
-		sql = "CREATE TABLE " + table_name + " (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,";
-		String[] vari = variables.split(",");
-		String[] col = column_list.split(",");
-		for (int i = 0; i < vari.length; i++) {
-			sql += col[i] + " " + vari[i] + " NOT NULL,";
-		}
-		sql = sql.substring(0, sql.length() - 1) + ")";
-		System.out.println(sql);
-		try {
-			pst = DBConnection.getConnection(this.target_db_name).prepareStatement(sql);
-			pst.executeUpdate();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		} finally {
-			try {
-				if (pst != null)
-					pst.close();
-				if (rs != null)
-					rs.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-
-		}
-	}
+//	// Tao bang:
+//	public boolean createTable(String table_name, String variables, String column_list) throws ClassNotFoundException {
+//		sql = "CREATE TABLE " + table_name + " (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,";
+//		String[] vari = variables.split(",");
+//		String[] col = column_list.split(",");
+//		for (int i = 0; i < vari.length; i++) {
+//			sql += col[i] + " " + vari[i] + " NOT NULL,";
+//		}
+//		sql = sql.substring(0, sql.length() - 1) + ")";
+//		System.out.println(sql);
+//		try {
+//			pst = DBConnection.getConnection(this.target_db_name).prepareStatement(sql);
+//			pst.executeUpdate();
+//			return true;
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			return false;
+//		} finally {
+//			try {
+//				if (pst != null)
+//					pst.close();
+//				if (rs != null)
+//					rs.close();
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//
+//		}
+//	}
 
 	// Sua:
 	// Phuong thuc loadInFile() load file vao trong table:

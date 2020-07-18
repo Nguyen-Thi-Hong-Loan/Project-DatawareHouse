@@ -104,7 +104,7 @@ public class Download {
 		Connection conn = null;
 		PreparedStatement pr = null;
 		try {
-			conn = DBConnection.getConnection("dbcontrol");
+			conn = DBConnection.getConnection("controldb");
 			String sql = "select * from config;";
 			pr = conn.prepareStatement(sql);
 			ResultSet rs = pr.executeQuery();
