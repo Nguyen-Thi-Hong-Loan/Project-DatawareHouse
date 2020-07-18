@@ -58,7 +58,62 @@ public class ControlDB {
 	public void setTable_name(String table_name) {
 		this.table_name = table_name;
 	}
-
+	public void truncateTable(String db_name,String table_name) {
+		String sql;
+		Connection connection = null;
+		PreparedStatement pst=null;
+		try {
+			sql = "TRUNCATE " + table_name;
+			connection =  DBConnection.getConnection(db_name);
+			pst = connection.prepareStatement(sql);
+			pst.executeUpdate();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		} finally {
+			try {
+				if (pst != null)
+					pst.close();
+				if (connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	public static ResultSet selectAllField(String db_name, String table_name) {
+		String sql = "";
+		ResultSet rs = null;
+		try {
+			sql = "select * from " + table_name;
+			Connection conn = DBConnection.getConnection(db_name);
+			PreparedStatement ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			return rs;
+		} catch (SQLException e) {
+			return null;
+		}
+	}
+	public void insertValuesToWareHouse(String value) {
+		String colum_list = "(mssv,firstname,lastname,dob,classid,classname,sdt,email,address,note)";
+		PreparedStatement ps = null;
+		try {
+			String sql = "INSERT INTO STUDENT"+colum_list+" VALUES " + value;
+			Connection conn = DBConnection.getConnection("database_warehouse");
+			 ps = conn.prepareStatement(sql);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			
+		}finally {
+			if(ps!=null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 	// Phuong thuc lay cac thuoc tinh co trong bang config:
 	public List<Config> loadAllConfs(String condition) throws SQLException {
 		List<Config> listConfig = new ArrayList<Config>();
