@@ -1,2 +1,0 @@
-NOTICE: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES) 
-TIME: Fri Jul 10 18:27:49 ICT 2020
