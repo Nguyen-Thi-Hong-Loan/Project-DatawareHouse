@@ -2,55 +2,32 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="text"/>
-	<classpathentry kind="lib" path="D:/Solfware/mysql-connector-java-8.0.11.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="activation.jar"/>
 	<classpathentry kind="lib" path="chilkat.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_231"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/poi-4.1.2.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/poi-examples-4.1.2.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/poi-excelant-4.1.2.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/poi-ooxml-4.1.2.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/poi-ooxml-schemas-4.1.2.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/poi-scratchpad-4.1.2.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/lib/activation-1.1.1.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/lib/commons-codec-1.13.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/lib/commons-collections4-4.4.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/lib/commons-compress-1.19.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/lib/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/lib/commons-math3-3.6.1.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/lib/jaxb-api-2.3.1.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/lib/jaxb-core-2.3.0.1.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/lib/jaxb-impl-2.3.2.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/lib/junit-4.12.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/lib/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/lib/SparseBitSet-1.2.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/ooxml-lib/curvesapi-1.06.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/import excel/poi-4.1.2/ooxml-lib/xmlbeans-3.1.0.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/com.jcraft.jsch_0.1.31.jar/com.jcraft.jsch_0.1.31.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-antlr.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-apache-bcel.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-apache-bsf.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-apache-log4j.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-apache-oro.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-apache-regexp.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-apache-resolver.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-apache-xalan2.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-commons-logging.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-commons-net.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-jai.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-javamail.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-jdepend.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-jmf.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-jsch.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-junit.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-junit4.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-launcher.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-netrexx.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-swing.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/lib/ant-testutil.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/apache-ant-1.9.15-bin/apache-ant-1.9.15/etc/ant-bootstrap.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/sftp/lib/bcprov-jdk15on-164.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/sftp/lib/bctls-jdk15on-165.jar"/>
-	<classpathentry kind="lib" path="D:/Solfware/sftp/lib/sftp.jar"/>
+	<classpathentry kind="lib" path="mail.jar"/>
+	<classpathentry kind="lib" path="commons-codec-1.13.jar"/>
+	<classpathentry kind="lib" path="commons-collections4-4.4.jar"/>
+	<classpathentry kind="lib" path="commons-compress-1.19.jar"/>
+	<classpathentry kind="lib" path="commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="commons-math3-3.6.1.jar"/>
+	<classpathentry kind="lib" path="curvesapi-1.06.jar"/>
+	<classpathentry kind="lib" path="jaxb-api-2.3.1.jar"/>
+	<classpathentry kind="lib" path="jaxb-core-2.3.0.1.jar"/>
+	<classpathentry kind="lib" path="jaxb-impl-2.3.2.jar"/>
+	<classpathentry kind="lib" path="junit-4.12.jar"/>
+	<classpathentry kind="lib" path="log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="poi-4.1.2.jar"/>
+	<classpathentry kind="lib" path="poi-examples-4.1.2.jar"/>
+	<classpathentry kind="lib" path="poi-excelant-4.1.2.jar"/>
+	<classpathentry kind="lib" path="poi-ooxml-4.1.2.jar"/>
+	<classpathentry kind="lib" path="poi-ooxml-schemas-4.1.2.jar"/>
+	<classpathentry kind="lib" path="poi-scratchpad-4.1.2.jar"/>
+	<classpathentry kind="lib" path="mysql-connector-java-5.1.23-bin.jar"/>
+	<classpathentry kind="lib" path="mysql-connector-java-8.0.11.jar"/>
+	<classpathentry kind="lib" path="resolver.jar"/>
+	<classpathentry kind="lib" path="xmlbeans-3.1.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="xmlbeans-3.1.0-sources.jar"/>
+	<classpathentry kind="lib" path="xmlbeans-3.1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
