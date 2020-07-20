@@ -1,18 +1,25 @@
 package modal;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
-import java.util.StringTokenizer;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import com.chilkatsoft.CkGlobal;
 import com.chilkatsoft.CkScp;
@@ -24,7 +31,8 @@ import control.Config;
 public class Download {
 	static {
 		try {
-			System.loadLibrary("chilkat");
+//			System.loadLibrary("chilkat");
+			System.load("E:\\Solfware\\chilkat-9.5.0-jdk8-x64\\chilkat.dll");
 		} catch (UnsatisfiedLinkError e) {
 			// viet bug vao file va send mail
 			WriteBug wb = new WriteBug();
@@ -38,7 +46,6 @@ public class Download {
 	public boolean download(String local_download_dir, String remoteFilePath, String serverAddress, int port,
 			String username, String password, String format) {
 		CkSsh ssh = new CkSsh();
-		System.out.println("kkkoooooooooooooo");
 
 		// unclock .........
 		CkGlobal ck = new CkGlobal();
@@ -81,9 +88,6 @@ public class Download {
 		scp.put_SyncMustMatch(format);
 		System.out.println(format);
 
-		// String remotePath = "/volume1/ECEP/song.nguyen/DW_2020/data";
-		// String localPath = "E:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE";
-
 		success = scp.SyncTreeDownload(remoteFilePath, local_download_dir, 2, false);
 		if (!success) {
 			WriteBug wb = new WriteBug();
@@ -99,15 +103,19 @@ public class Download {
 
 	}
 
-	public static void saveDataFromFTPToLocal() {
+	public boolean saveDataFromFTPToLocal(int id) {
 
 		Connection conn = null;
-		PreparedStatement pr = null;
+		CallableStatement cstm = null;
+
 		try {
-			conn = DBConnection.getConnection("controldb");
-			String sql = "select * from config;";
-			pr = conn.prepareStatement(sql);
-			ResultSet rs = pr.executeQuery();
+			conn = DBConnection.getConSQL("controldb");
+			// khoi tao loi goi thuc thi thu tuc
+			String sql = "{call sp_loadConfig (?)}";
+			cstm = conn.prepareCall(sql);
+			// Set parameter values
+			cstm.setInt(1, id);
+			ResultSet rs = cstm.executeQuery();
 
 			while (rs.next()) {
 				Config conf = new Config();
@@ -121,6 +129,7 @@ public class Download {
 				conf.setServerDes(rs.getString("serverDes"));
 				conf.setUseDes(rs.getString("userDes"));
 				conf.setPassDes(rs.getString("passDes"));
+				conf.setFileType(rs.getString("fileType"));
 
 				boolean download = new Download().download(conf.getDirSou(), "/volume1/ECEP/song.nguyen/DW_2020/data",
 						conf.getServerSou(), conf.getPort(), conf.getUserSou(), conf.getPassSou(), conf.getFormatSou());
@@ -129,37 +138,55 @@ public class Download {
 					List<String> lsFile = readLsFile(conf.getDirSou());
 					for (String fName : lsFile) {
 
-						String newSql = "insert into log ( idConfig, state,result, numColumn, fileName, dateUserInsert) "
-								+ "values (?,?,?,?,?,?)";
-						pr = conn.prepareStatement(newSql);
+						String fileName = conf.getDirSou() + "\\" + "\\" + fName;
+						System.out.println("file:     ----   " + fileName);
+						int numColumn = (fileName.endsWith(".txt")) ? countLineTxt(fileName)
+								: (fileName.endsWith(".xlsx") ? numColumn = countFExcel(fileName) : 0);
 
-						int idConfig = conf.getIdConf();
-						String state = "ER";
-						String result = "OK";
-						int numColumn = 0;
+						loadLog(fName, numColumn, id, "controldb");
 
-						pr.setInt(1, idConfig);
-						pr.setString(2, state);
-						pr.setString(3, result);
-						pr.setInt(4, numColumn);
-						pr.setString(5, fName);
-						pr.setTimestamp(6, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
-
-						pr.executeUpdate();
-						System.out.println("ok");
 					}
-				} else {
-					System.out.println("nooooooooooo");
-
 				}
 
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				cstm.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
+		return true;
 
 	}
 
+	public static void loadLog(String name, int num, int idCf, String db) {
+		try {
+			Connection conn = DBConnection.getConSQL(db);
+			String sql = "{call sp_insertLog (?,?,?)}";
+			CallableStatement cstm = conn.prepareCall(sql);
+			// Set parameter values
+			cstm.setString(1, name);
+			cstm.setInt(2, num);
+			cstm.setInt(3, idCf);
+			System.out.println(cstm.execute());
+			
+			System.out.println("ghi log thanh cong");
+
+			cstm.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+
+	// read a list file
 	public static List<String> readLsFile(String directory) {
 		List<String> lsFile = new ArrayList<String>();
 		File file = new File(directory);
@@ -174,58 +201,65 @@ public class Download {
 
 	}
 
-	// đếm đc file .txt mà thôi
-
-	public static int countLine(String file) {
+	// count row in file excel
+	public static int countFExcel(String file) {
 		int count = 0;
-		// Scanner console = new Scanner(System.in);
-		//
-		// System.out.println("File to be read: ");
-		// String inputFile = console.next();
-
-		File f = new File(file);
 		try {
-			Scanner in = new Scanner(f);
+			// Creating a Workbook from an Excel file (.xls or .xlsx)
+			Workbook workbook = WorkbookFactory.create(new File(file));
 
-			int words = 0;
-			int lines = 0;
-			int chars = 0;
-			while (in.hasNextLine()) {
-				lines++;
-				String line = in.nextLine();
-				for (int i = 0; i < line.length(); i++) {
-					if (line.charAt(i) != ' ' && line.charAt(i) != '\n')
-						chars++;
-				}
-				words += new StringTokenizer(line, " ,;:.").countTokens();
+			// Getting the Sheet at index zero
+			Sheet sheet = workbook.getSheetAt(0);
+
+			// get all row in file
+			Iterator<Row> rowIterator = sheet.rowIterator();
+
+			while (rowIterator.hasNext()) {
+				// get next row
+				Row row = rowIterator.next();
+				count++;
 			}
-			System.out.println(words + ", " + lines + ", " + chars);
-		} catch (FileNotFoundException e) {
+			// Closing the workbook
+			workbook.close();
+
+		} catch (EncryptedDocumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return count;
 	}
 
-	// public static int countFExcel(String file) {
-	// Workbook workbook = getWorkbook(file);
-	//
-	// // Create sheet
-	// Sheet sh = workbook.createSheet("Books"); // Create sheet with sheet name
-	//
-	// int count = sh.getRow(0).getPhysicalNumberOfCells();
-	// return count;
-	// }
+	public static int countLineTxt(String s_file) {
+		try {
 
-	public static void main(String[] args) {
-		Download.saveDataFromFTPToLocal();
-		// Download.countLine("F:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE\\sinhvien_chieu_nhom4.txt");
+			File file = new File(s_file);
 
-		// List<String> l = new
-		// Download().readLsFile("F:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\FILE");
-		// for (String string : l) {
-		// System.out.println(string);
-		//
-		// }
+			// kt file co ton tai hay k
+			if (file.exists()) {
+
+				FileReader fr = new FileReader(file);
+				LineNumberReader lnr = new LineNumberReader(fr);
+
+				int linenumber = 0;
+
+				while (lnr.readLine() != null) {
+					linenumber++;
+				}
+
+				System.out.println("Total number of lines : " + linenumber);
+
+				lnr.close();
+				return linenumber;
+
+			} else {
+				System.out.println("File does not exists!");
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 }

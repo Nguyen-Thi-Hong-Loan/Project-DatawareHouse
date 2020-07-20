@@ -256,8 +256,8 @@ public class ControlDB {
 	// Sua:
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		ControlDB cb = new ControlDB("database_staging");
-		Log log = cb.getLogsWithStatus("ER");
-		System.out.println(log.toString());
+		Log l = cb.getLogsWithStatus("ER");
+		System.out.println(l.toString());
 	}
 
 }
