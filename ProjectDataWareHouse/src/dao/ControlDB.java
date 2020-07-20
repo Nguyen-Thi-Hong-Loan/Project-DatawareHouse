@@ -62,7 +62,7 @@ public class ControlDB {
 	// Phuong thuc lay cac thuoc tinh co trong bang config:
 	public List<Config> loadAllConfs(String condition) throws SQLException {
 		List<Config> listConfig = new ArrayList<Config>();
-		Connection conn = DBConnection.getConnection("dbcontrol");
+		Connection conn = DBConnection.getConnection("controldb");
 		String selectConfig = "select * from config where configName=?";
 		PreparedStatement ps = conn.prepareStatement(selectConfig);
 		ps.setString(1, condition);
@@ -99,7 +99,7 @@ public class ControlDB {
 	public Log getLogsWithStatus(String condition) throws SQLException {
 		// List<Log> listLog = new ArrayList<Log>();
 		Log log = new Log();
-		Connection conn = DBConnection.getConnection("dbcontrol");
+		Connection conn = DBConnection.getConnection("controldb");
 		String selectLog = "select * from log where state=?";
 		PreparedStatement ps = conn.prepareStatement(selectLog);
 		ps.setString(1, condition);
@@ -195,7 +195,7 @@ public class ControlDB {
 		Connection connection;
 		String sql = "UPDATE log SET state=?, result=?, dateLoadToStaging=? WHERE fileName=?";
 		try {
-			connection = DBConnection.getConnection("dbcontrol");
+			connection = DBConnection.getConnection("controldb");
 			PreparedStatement ps1 = connection.prepareStatement(sql);
 			ps1.setString(1, status);
 			ps1.setString(2, result);
@@ -256,8 +256,8 @@ public class ControlDB {
 	// Sua:
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		ControlDB cb = new ControlDB("database_staging");
-		Log log = cb.getLogsWithStatus("ER");
-		System.out.println(log.toString());
+		Log l = cb.getLogsWithStatus("ER");
+		System.out.println(l.toString());
 	}
 
 }

@@ -46,12 +46,11 @@ public class DataStaging {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		DataStaging dw = new DataStaging();
-		dw.setConfig_name("f_txt");
+		dw.setConfig_name("f_xlsx");
 		dw.setState("ER");
-		;
 		DataProcess dp = new DataProcess();
 		ControlDB cdb = new ControlDB();
-		cdb.setConfig_db_name("dbcontrol");
+		cdb.setConfig_db_name("controldb");
 		cdb.setTarget_db_name("database_staging");
 		cdb.setTable_name("config");
 		dp.setCdb(cdb);
@@ -76,7 +75,7 @@ public class DataStaging {
 			File imp_dir = new File(import_dir);
 			Log log = dp.getCdb().getLogsWithStatus(this.state);
 			String file_name = log.getFileName();
-			String sourceFile = import_dir + File.separator + File.separator + file_name;
+			String sourceFile = import_dir + File.separator + file_name;
 			System.out.println(sourceFile);
 			File file = new File(sourceFile);
 			if (file.exists()) {
