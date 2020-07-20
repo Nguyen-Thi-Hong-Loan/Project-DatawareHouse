@@ -93,6 +93,9 @@ public class ControlDB {
 			return null;
 		}
 	}
+	//abc de fs
+	
+	
 	public void insertValuesToWareHouse(String value) {
 		String colum_list = "(mssv,firstname,lastname,dob,classid,classname,sdt,email,address,note)";
 		PreparedStatement ps = null;
