@@ -118,25 +118,25 @@ public class ControlDB {
 	}
 
 	// Kiem tra bang co ton tai hay chua:
-	public boolean tableExist(String table_name) throws ClassNotFoundException {
-		try {
-			DatabaseMetaData dbm = DBConnection.getConnection(this.target_db_name).getMetaData();
-			ResultSet tables = dbm.getTables(null, null, table_name, null);
-			try {
-				if (tables.next()) {
-					return true;
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return false;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-
-		return false;
-	}
+//	public boolean tableExist(String table_name) throws ClassNotFoundException {
+//		try {
+//			DatabaseMetaData dbm = DBConnection.getConnection(this.target_db_name).getMetaData();
+//			ResultSet tables = dbm.getTables(null, null, table_name, null);
+//			try {
+//				if (tables.next()) {
+//					return true;
+//				}
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//				return false;
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			return false;
+//		}
+//
+//		return false;
+//	}
 
 	// Chen du lieu vao bang trong database staging:
 	public boolean insertValues(String fieldName, String values, String targetTable) throws ClassNotFoundException {
@@ -209,35 +209,35 @@ public class ControlDB {
 		}
 	}
 
-	// Tao bang:
-	public boolean createTable(String table_name, String variables, String column_list) throws ClassNotFoundException {
-		sql = "CREATE TABLE " + table_name + " (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,";
-		String[] vari = variables.split(",");
-		String[] col = column_list.split(",");
-		for (int i = 0; i < vari.length; i++) {
-			sql += col[i] + " " + vari[i] + " NOT NULL,";
-		}
-		sql = sql.substring(0, sql.length() - 1) + ")";
-		System.out.println(sql);
-		try {
-			pst = DBConnection.getConnection(this.target_db_name).prepareStatement(sql);
-			pst.executeUpdate();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		} finally {
-			try {
-				if (pst != null)
-					pst.close();
-				if (rs != null)
-					rs.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-
-		}
-	}
+//	// Tao bang:
+//	public boolean createTable(String table_name, String variables, String column_list) throws ClassNotFoundException {
+//		sql = "CREATE TABLE " + table_name + " (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,";
+//		String[] vari = variables.split(",");
+//		String[] col = column_list.split(",");
+//		for (int i = 0; i < vari.length; i++) {
+//			sql += col[i] + " " + vari[i] + " NOT NULL,";
+//		}
+//		sql = sql.substring(0, sql.length() - 1) + ")";
+//		System.out.println(sql);
+//		try {
+//			pst = DBConnection.getConnection(this.target_db_name).prepareStatement(sql);
+//			pst.executeUpdate();
+//			return true;
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			return false;
+//		} finally {
+//			try {
+//				if (pst != null)
+//					pst.close();
+//				if (rs != null)
+//					rs.close();
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//
+//		}
+//	}
 
 	// Sua:
 	// Phuong thuc loadInFile() load file vao trong table:
