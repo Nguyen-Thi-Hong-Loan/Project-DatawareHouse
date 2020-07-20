@@ -138,18 +138,11 @@ public class Download {
 					List<String> lsFile = readLsFile(conf.getDirSou());
 					for (String fName : lsFile) {
 
-//						String newSql = "{call sp_loadConfig (?,?,?)}";
-//						cstm = conn.prepareCall(newSql);
-
 						String fileName = conf.getDirSou() + "\\" + "\\" + fName;
 						System.out.println("file:     ----   " + fileName);
 						int numColumn = (fileName.endsWith(".txt")) ? countLineTxt(fileName)
 								: (fileName.endsWith(".xlsx") ? numColumn = countFExcel(fileName) : 0);
 
-//						cstm.setString(1, fName);
-//						cstm.setInt(2, numColumn);
-//						cstm.setInt(3, id);
-//						cstm.executeUpdate();
 						loadLog(fName, numColumn, id, "controldb");
 
 					}
