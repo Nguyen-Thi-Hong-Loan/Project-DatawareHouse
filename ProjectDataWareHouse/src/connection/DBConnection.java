@@ -37,6 +37,23 @@ public class DBConnection {
 		}
 	}
 
+	public static Connection getConSQL(String dbName) {
+		try {
+			String hostName = "localhost";
+			String userName = "sa";
+			String password = "1234567890@";
+			// dang ky driver
+			Connection conn;
+			String connectionURL = "jdbc:sqlserver://" + hostName + ";databaseName=" + dbName;
+			conn = DriverManager.getConnection(connectionURL, userName, password);
+			System.out.println("ket not thanh cong");
+			return conn;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static void main(String[] args) throws SQLException {
 		PreparedStatement pst = DBConnection.getConnection("dbcontrol").prepareStatement("select * from config");
 		ResultSet rs = pst.executeQuery();
