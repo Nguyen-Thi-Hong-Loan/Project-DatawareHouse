@@ -109,54 +109,6 @@ public class DataProcess {
 		}
 	}
 
-	// Ghi dữ liệu từ datastaging và datawarehouse:
-	public void writeDataToWareHouse(ResultSet rs) {
-		try {
-			while (rs.next()) {
-				String mssv = rs.getString("mssv");
-				String ho = rs.getString("firstname");
-				String ten = rs.getString("lastname");
-				String ngay_sinh = rs.getString("dob");
-				String ma_lop = rs.getString("classid");
-				String ten_lop = rs.getString("classname");
-				String sdt = rs.getString("sdt");
-				String email = rs.getString("email");
-				String que_quan = rs.getString("address");
-				String note = rs.getString("note");
-				String value = "('" + mssv + "','" + ho + "','" + ten + "','" + ngay_sinh + "','" + ma_lop + "','"
-						+ ten_lop + "','" + sdt + "','" + email + "','" + que_quan + "','" + note + "')";
-				// insert into student values('18130002','Lưu
-				// Văn','An','2020-01-01','DH18DTC','CÔNG NGHỆ THÔNG
-				// TIN','0879234555','18130002@st.hcmuaf.edu.vn','Vũng
-				// Tàu','N/A')
-				// ('18130002','Lưu Văn','An','2020-01-01','DH18DTC','CÔNG NGHỆ
-				// THÔNG TIN','0879234555','18130002@st.hcmuaf.edu.vn','Vũng
-				// Tàu','N/A)
-				cdb.insertValuesToWareHouse(value);
-
-			}
-			cdb.truncateTable("database_staging", "student");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			// try {
-			// rs.close();
-			// } catch (SQLException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// }
-		}
-	}
-
-	// Hàm main này để test xem các phương thức ở lớp này có đúng không:
-	public static void main(String[] args) {
-		ControlDB dp = new ControlDB();
-		ResultSet allRecored = dp.selectAllField("database_staging", "student");
-		DataProcess dppp = new DataProcess();
-		dppp.writeDataToWareHouse(allRecored);
-	}
-
 	// Phương thức đọc dữ liệu trong file .xlsx:
 	public String readValuesXLSX(File s_file, int countField) {
 		String values = "";

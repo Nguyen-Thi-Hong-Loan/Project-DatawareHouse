@@ -121,12 +121,6 @@ public class DataStaging {
 						// thì mình ghi dữ liệu vô bảng
 						// nếu mình ghi được dữ liệu vô bảng
 						if (dp.writeDataToBD(column_list, target_table, values)) {
-							// Move to warehouse
-							// Chon tat ca cac dong trong table
-							// student(db_staging) -> luu vao doi tuong
-							// ResultSet
-//							ResultSet allRecored = ControlDB.selectAllField("database_staging", "student");
-//							dp.writeDataToWareHouse(allRecored);
 							file_status = "TR";
 							result = "OK";
 							// update cái log lại, chuyển file đã extract xong
