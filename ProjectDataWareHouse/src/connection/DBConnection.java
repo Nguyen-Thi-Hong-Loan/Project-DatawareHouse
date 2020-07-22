@@ -15,8 +15,8 @@ import log.Log;
 import modal.SendMail;
 import modal.WriteBug;
 
-public  class DBConnection {
-
+public class DBConnection {
+	// Phương thức tạo kết nối với databse:
 	@SuppressWarnings("unused")
 	public static Connection getConnection(String db_Name) {
 		Connection con = null;
