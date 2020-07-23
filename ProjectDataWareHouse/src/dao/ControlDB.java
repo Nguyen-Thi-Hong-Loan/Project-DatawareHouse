@@ -62,12 +62,12 @@ public class ControlDB {
 	// Phương thức lấy tất cả các thuộc tính có trong bảng config (lấy tất cả
 	// các dòng config) lấy theo condition là configName (f_sinhvien hay
 	// f_monhoc)
-	public List<Config> loadAllConfs(String condition) throws SQLException {
+	public List<Config> loadAllConfs(int condition) throws SQLException {
 		List<Config> listConfig = new ArrayList<Config>();
 		Connection conn = DBConnection.getConnection("controldb");
-		String selectConfig = "select * from config where configName=?";
+		String selectConfig = "select * from config where idConfig=?";
 		PreparedStatement ps = conn.prepareStatement(selectConfig);
-		ps.setString(1, condition);
+		ps.setInt(1, condition);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			Config conf = new Config();
@@ -210,8 +210,10 @@ public class ControlDB {
 	// Hàm main này để test các phương thức trên chạy ổn hay chưa:
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		ControlDB cb = new ControlDB("database_staging");
-		Log log = cb.getLogsWithStatus("ER");
-		System.out.println(log.toString());
+		List<Config> config = cb.loadAllConfs(1);
+		for (Config config2 : config) {
+			System.out.println(config2.toString());
+		}
 	}
 
 }

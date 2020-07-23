@@ -24,20 +24,24 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import control.Config;
 import dao.ControlDB;
 import log.Log;
+import modal.SendMail;
+import modal.WriteBug;
 
 public class DataStaging {
 	static final String EXT_TEXT = ".txt";
 	static final String EXT_CSV = ".csv";
 	static final String EXT_EXCEL = ".xlsx";
-	private String config_name;
+	private int config_id;
 	private String state;
 
-	public String getConfig_name() {
-		return config_name;
+	
+
+	public int getConfig_id() {
+		return config_id;
 	}
 
-	public void setConfig_name(String config_name) {
-		this.config_name = config_name;
+	public void setConfig_id(int config_id) {
+		this.config_id = config_id;
 	}
 
 	public String getState() {
@@ -48,21 +52,8 @@ public class DataStaging {
 		this.state = state;
 	}
 
-	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		DataStaging dw = new DataStaging();
-		dw.setConfig_name("f_monhoc");
-		dw.setState("ER");
-		DataProcess dp = new DataProcess();
-		ControlDB cdb = new ControlDB();
-		cdb.setConfig_db_name("controldb");
-		cdb.setTarget_db_name("database_staging");
-		cdb.setTable_name("config");
-		dp.setCdb(cdb);
-		dw.ExtractToDB(dp);
-	}
-
 	public void ExtractToDB(DataProcess dp) throws ClassNotFoundException, SQLException {
-		List<Config> lstConf = dp.getCdb().loadAllConfs(this.config_name);
+		List<Config> lstConf = dp.getCdb().loadAllConfs(this.config_id);
 		// Lấy các trường trong các dòng config ra:
 		for (Config configuration : lstConf) {
 			String extention = "";
@@ -127,8 +118,8 @@ public class DataStaging {
 							// vào thư mục success
 							dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
 							target_dir = configuration.getSuccessDir();
-							if (moveFile(target_dir, file))
-								;
+//							if (moveFile(target_dir, file))
+//								;
 
 						} else {
 							// Nếu mà bị lỗi thì update log là state=Not TR và
@@ -137,8 +128,11 @@ public class DataStaging {
 							result = "FAIL";
 							dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
 							target_dir = configuration.getErrorDir();
-							if (moveFile(target_dir, file))
-								;
+//							if (moveFile(target_dir, file))
+//								;
+							WriteBug wb = new WriteBug();
+							wb.writeBug("Load file to staging not success!");
+							new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
 						}
 					}
 				}
