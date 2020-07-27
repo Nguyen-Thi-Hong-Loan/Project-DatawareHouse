@@ -60,14 +60,14 @@ public class ControlDB {
 	}
 
 	// Phương thức lấy tất cả các thuộc tính có trong bảng config (lấy tất cả
-	// các dòng config) lấy theo condition là configName (f_sinhvien hay
-	// f_monhoc)
-	public List<Config> loadAllConfs(String condition) throws SQLException {
+	// các dòng config) lấy theo condition là idConfig (1:sinhvien, 2:monhoc,
+	// 3:dangky, 4:lophoc)
+	public List<Config> loadAllConfs(int condition) throws SQLException {
 		List<Config> listConfig = new ArrayList<Config>();
 		Connection conn = DBConnection.getConnection("controldb");
-		String selectConfig = "select * from config where configName=?";
+		String selectConfig = "select * from config where idConfig=?";
 		PreparedStatement ps = conn.prepareStatement(selectConfig);
-		ps.setString(1, condition);
+		ps.setInt(1, condition);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			Config conf = new Config();
@@ -96,13 +96,38 @@ public class ControlDB {
 		return listConfig;
 	}
 
-	// Phương thức lấy một dòng log đầu tiên trong table log có state = ER
-	public Log getLogsWithStatus(String condition) throws SQLException {
-		Log log = new Log();
+	
+	// Phuong thuc lay ra list log:
+	public List<Log> getLog(String condition, int id_config) throws SQLException {
+		List<Log> lstLog = new ArrayList<Log>();
 		Connection conn = DBConnection.getConnection("controldb");
-		String selectLog = "select * from log where state=?";
+		String selectLog = "select * from log where state=? and idConfig=?";
 		PreparedStatement ps = conn.prepareStatement(selectLog);
 		ps.setString(1, condition);
+		ps.setInt(2, id_config);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			Log log = new Log();
+			log.setIdLog(rs.getInt("idlog"));
+			log.setIdConfig(rs.getInt("idConfig"));
+			log.setState(rs.getString("state"));
+			log.setResult(rs.getString("result"));
+			log.setNumColumn(rs.getInt("numColumn"));
+			log.setFileName(rs.getString("fileName"));
+			lstLog.add(log);
+
+		}
+		return lstLog;
+	}
+
+	// Phương thức lấy một dòng log đầu tiên trong table log có state = ER
+	public Log getLogsWithStatus(String condition, int id_config) throws SQLException {
+		Log log = new Log();
+		Connection conn = DBConnection.getConnection("controldb");
+		String selectLog = "select * from log where state=? and idConfig=?";
+		PreparedStatement ps = conn.prepareStatement(selectLog);
+		ps.setString(1, condition);
+		ps.setInt(2, id_config);
 		ResultSet rs = ps.executeQuery();
 		rs.last();
 		if (rs.getRow() >= 1) {
@@ -210,8 +235,7 @@ public class ControlDB {
 	// Hàm main này để test các phương thức trên chạy ổn hay chưa:
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		ControlDB cb = new ControlDB("database_staging");
-		Log log = cb.getLogsWithStatus("ER");
-		System.out.println(log.toString());
+
 	}
 
 }
