@@ -62,7 +62,7 @@ public class DataProcess {
 		return values;
 	}
 
-	// Phương thức đọ dữ liệu trong file .txt:
+	// Phương thức đọc dữ liệu trong file .txt:
 	public String readValuesTXT(File s_file, int count_field) {
 		if (!s_file.exists()) {
 			return null;

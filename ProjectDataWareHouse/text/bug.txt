@@ -1,13 +1,2 @@
-NOTICE: ChilkatLog:
-  Connect_Ssh:
-    DllDate: Feb 24 2020
-    ChilkatVersion: 9.5.0.82
-    UnlockPrefix: Hi
-    Architecture: Little Endian; 64-bit
-    Language: Windows Java
-    VerboseLogging: 0
-    The Chilkat API  is not unlocked, make sure to call UnlockBundle first.  (The UnlockBundle method belongs to the Chilkat.Global class, which may be named CkGlobal, CkoGlobal, etc depending on the programming language.)
-  --Connect_Ssh
---ChilkatLog
-
-TIME: Wed Jul 01 16:45:04 ICT 2020
+NOTICE: Load file to staging not success!
+TIME: Fri Jul 24 21:03:35 ICT 2020
