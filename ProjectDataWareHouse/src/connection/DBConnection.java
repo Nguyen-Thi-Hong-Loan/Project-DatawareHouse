@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Properties;
 
 import control.Config;
+import dao.ControlDB;
 import log.Log;
 import modal.SendMail;
 import modal.WriteBug;
@@ -55,7 +56,7 @@ public class DBConnection {
 	}
 
 	public static void main(String[] args) throws SQLException {
-		PreparedStatement pst = DBConnection.getConnection("dbcontrol").prepareStatement("select * from config");
+		PreparedStatement pst = DBConnection.getConnection("controldb").prepareStatement("select * from config");
 		ResultSet rs = pst.executeQuery();
 		rs.last();
 		System.out.println(rs.getRow());

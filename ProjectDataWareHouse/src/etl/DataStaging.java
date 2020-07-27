@@ -34,8 +34,6 @@ public class DataStaging {
 	private int config_id;
 	private String state;
 
-	
-
 	public int getConfig_id() {
 		return config_id;
 	}
@@ -58,88 +56,95 @@ public class DataStaging {
 		for (Config configuration : lstConf) {
 			String extention = "";
 			String target_table = configuration.getTargetTable();
-			String import_dir = configuration.getImportDir();
+			String import_dir = configuration.getDirSou();
 			String delim = configuration.getDelimeterSou();
 			String column_list = configuration.getFieldName();
 			String variabless = configuration.getVariabless();
 			System.out.println(target_table);
 			System.out.println(import_dir);
 			// Lấy các trường có trong dòng log đầu tiên có state=ER;
-			Log log = dp.getCdb().getLogsWithStatus(this.state);
-			// Lấy file_name từ trong config ra
-			String file_name = log.getFileName();
-			// Ráp với importDir đề được cái đường dẫn tới file
-			String sourceFile = import_dir + File.separator + file_name;
-			// Đếm số trường trong filedName ở trong bảng config
-			StringTokenizer str = new StringTokenizer(column_list, delim);
-			System.out.println(sourceFile);
-			File file = new File(sourceFile);
-			// Lấy cái đuôi file ra coi đó là kiểu file gì để xử lí đọc file
-			extention = file.getPath().endsWith(".xlsx") ? EXT_EXCEL
-					: file.getPath().endsWith(".txt") ? EXT_TEXT : EXT_CSV;
-			if (file.exists()) {
-				// Nếu log có resule là OK (thật ra cái này không cần cũng được)
-				if (log.getResult().equals("OK")) {
-					String values = "";
-					// Nếu file là .txt thì đọc file .txt
-					if (extention.equals(".txt")) {
-						values = dp.readValuesTXT(file, str.countTokens());
-						extention = ".txt";
-						// Nếu file là .xlsx thì đọc file .xlsx
-					} else if (extention.equals(".xlsx")) {
-						values = dp.readValuesXLSX(file, str.countTokens());
-						extention = ".xlsx";
-					}
-					System.out.println(values);
-					// Nếu đọc được giá trị rồi
-					if (values != null) {
-						String table = "log";
-						String file_status;
-						String result;
-						int config_id = configuration.getIdConf();
-						// time
-						String timestamp = getCurrentTime();
-						// count line
-						String stagin_load_count = "";
-						try {
-							stagin_load_count = countLines(file, extention) + "";
-						} catch (InvalidFormatException
-								| org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
-							e.printStackTrace();
+			// Log log = dp.getCdb().getLogsWithStatus(this.state,
+			// this.config_id);
+			List<Log> lstLog = dp.getCdb().getLog(this.state, this.config_id);
+			for (Log log : lstLog) {
+				// Lấy file_name từ trong config ra
+				String file_name = log.getFileName();
+				// Ráp với importDir đề được cái đường dẫn tới file
+				String sourceFile = import_dir + File.separator + file_name;
+				// Đếm số trường trong filedName ở trong bảng config
+				StringTokenizer str = new StringTokenizer(column_list, delim);
+				System.out.println(sourceFile);
+				File file = new File(sourceFile);
+				// Lấy cái đuôi file ra coi đó là kiểu file gì để xử lí đọc file
+				extention = file.getPath().endsWith(".xlsx") ? EXT_EXCEL
+						: file.getPath().endsWith(".txt") ? EXT_TEXT : EXT_CSV;
+				if (file.exists()) {
+					// Nếu log có resule là OK (thật ra cái này không cần cũng
+					// được)
+					if (log.getResult().equals("OK")) {
+						String values = "";
+						// Nếu file là .txt thì đọc file .txt
+						if (extention.equals(".txt")) {
+							values = dp.readValuesTXT(file, str.countTokens());
+							extention = ".txt";
+							// Nếu file là .xlsx thì đọc file .xlsx
+						} else if (extention.equals(".xlsx")) {
+							values = dp.readValuesXLSX(file, str.countTokens());
+							extention = ".xlsx";
 						}
+						System.out.println(values);
+						// Nếu đọc được giá trị rồi
+						if (values != null) {
+							String table = "log";
+							String file_status;
+							String result;
+							int config_id = configuration.getIdConf();
+							// time
+							String timestamp = getCurrentTime();
+							// count line
+							String stagin_load_count = "";
+							try {
+								stagin_load_count = countLines(file, extention) + "";
+							} catch (InvalidFormatException
+									| org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
+								e.printStackTrace();
+							}
 
-						String target_dir;
-						// thì mình ghi dữ liệu vô bảng
-						// nếu mình ghi được dữ liệu vô bảng
-						if (dp.writeDataToBD(column_list, target_table, values)) {
-							file_status = "TR";
-							result = "OK";
-							// update cái log lại, chuyển file đã extract xong
-							// vào thư mục success
-							dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
-							target_dir = configuration.getSuccessDir();
-//							if (moveFile(target_dir, file))
-//								;
+							String target_dir;
+							// thì mình ghi dữ liệu vô bảng
+							// nếu mình ghi được dữ liệu vô bảng
+							if (dp.writeDataToBD(column_list, target_table, values)) {
+								file_status = "TR";
+								result = "OK";
+								// update cái log lại, chuyển file đã extract
+								// xong
+								// vào thư mục success
+								dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
+								target_dir = configuration.getSuccessDir();
+								// if (moveFile(target_dir, file))
+								// ;
 
-						} else {
-							// Nếu mà bị lỗi thì update log là state=Not TR và
-							// result=FAIL và ghi file vào thư mục error
-							file_status = "Not TR";
-							result = "FAIL";
-							dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
-							target_dir = configuration.getErrorDir();
-//							if (moveFile(target_dir, file))
-//								;
-							WriteBug wb = new WriteBug();
-							wb.writeBug("Load file to staging not success!");
-							new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
+							} else {
+								// Nếu mà bị lỗi thì update log là state=Not TR
+								// và
+								// result=FAIL và ghi file vào thư mục error
+								file_status = "Not TR";
+								result = "FAIL";
+								dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
+								target_dir = configuration.getErrorDir();
+								// if (moveFile(target_dir, file))
+								// ;
+								WriteBug wb = new WriteBug();
+								wb.writeBug("Load file to staging not success!");
+								new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
+							}
 						}
 					}
+
+				} else {
+					System.out.println("Path not exists!!!");
+					return;
 				}
-
-			} else {
-				System.out.println("Path not exists!!!");
-				return;
 			}
 
 		}

@@ -10,14 +10,14 @@ import modal.Download;
 
 public class TestDW {
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-//		//Bước 1: Load từ server về local:
+		//Bước 1: Load từ server về local:
 //		Download download = new Download();
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Nhập id config cần download: ");
 		int id = sc.nextInt();
 //		System.out.println(download.saveDataFromFTPToLocal(id));
 //		System.out.println("done");
-		//Bước 2: Load từ local vào database staging:
+//		Bước 2: Load từ local vào database staging:
 		DataStaging dw = new DataStaging();
 		dw.setConfig_id(id);
 		dw.setState("ER");

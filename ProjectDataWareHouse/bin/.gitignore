@@ -1,5 +1,7 @@
-/test/
-/connection/
+/control/
 /dao/
 /etl/
+/log/
 /modal/
+/test/
+/connection/
