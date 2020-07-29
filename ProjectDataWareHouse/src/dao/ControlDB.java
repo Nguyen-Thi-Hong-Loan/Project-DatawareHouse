@@ -64,7 +64,8 @@ public class ControlDB {
 	// 3:dangky, 4:lophoc)
 	public List<Config> loadAllConfs(int condition) throws SQLException {
 		List<Config> listConfig = new ArrayList<Config>();
-		Connection conn = DBConnection.getConnection("controldb");
+		Connection conn = DBConnection.getConSQL("controldb");
+//		Connection conn = DBConnection.getConnection("controldb");
 		String selectConfig = "select * from config where idConfig=?";
 		PreparedStatement ps = conn.prepareStatement(selectConfig);
 		ps.setInt(1, condition);
@@ -100,7 +101,8 @@ public class ControlDB {
 	// Phuong thuc lay ra list log:
 	public List<Log> getLog(String condition, int id_config) throws SQLException {
 		List<Log> lstLog = new ArrayList<Log>();
-		Connection conn = DBConnection.getConnection("controldb");
+		Connection conn = DBConnection.getConSQL("controldb");
+//		Connection conn = DBConnection.getConnection("controldb");
 		String selectLog = "select * from log where state=? and idConfig=?";
 		PreparedStatement ps = conn.prepareStatement(selectLog);
 		ps.setString(1, condition);
@@ -123,7 +125,8 @@ public class ControlDB {
 	// Phương thức lấy một dòng log đầu tiên trong table log có state = ER
 	public Log getLogsWithStatus(String condition, int id_config) throws SQLException {
 		Log log = new Log();
-		Connection conn = DBConnection.getConnection("controldb");
+		Connection conn = DBConnection.getConSQL("controldb");
+//		Connection conn = DBConnection.getConnection("controldb");
 		String selectLog = "select * from log where state=? and idConfig=?";
 		PreparedStatement ps = conn.prepareStatement(selectLog);
 		ps.setString(1, condition);
@@ -148,7 +151,8 @@ public class ControlDB {
 		sql = "INSERT INTO " + targetTable + "(" + fieldName + ") VALUES " + values;
 		System.out.println(sql);
 		try {
-			pst = DBConnection.getConnection(this.target_db_name).prepareStatement(sql);
+			pst = DBConnection.getConSQL(this.target_db_name).prepareStatement(sql);
+//			pst = DBConnection.getConnection(this.target_db_name).prepareStatement(sql);
 			pst.executeUpdate();
 			return true;
 		} catch (SQLException e) {
@@ -173,7 +177,8 @@ public class ControlDB {
 			String stagin_load_count, String file_name) throws ClassNotFoundException {
 		sql = "INSERT INTO " + table + "(dataFileName,idConfig,state,numColumn,dateUserInsert) value (?,?,?,?,?)";
 		try {
-			pst = DBConnection.getConnection(this.config_db_name).prepareStatement(sql);
+			pst = DBConnection.getConSQL(this.config_db_name).prepareStatement(sql);
+//			pst = DBConnection.getConnection(this.config_db_name).prepareStatement(sql);
 			pst.setString(1, file_name);
 			pst.setInt(2, config_id);
 			pst.setString(3, file_status);

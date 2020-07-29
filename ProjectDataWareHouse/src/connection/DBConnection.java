@@ -45,6 +45,7 @@ public class DBConnection {
 			String password = "1234567890@";
 			// dang ky driver
 			Connection conn;
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			String connectionURL = "jdbc:sqlserver://" + hostName + ";databaseName=" + dbName;
 			conn = DriverManager.getConnection(connectionURL, userName, password);
 			System.out.println("ket not thanh cong");

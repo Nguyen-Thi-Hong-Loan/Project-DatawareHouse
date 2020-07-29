@@ -16,6 +16,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
 import org.apache.commons.compress.archivers.dump.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -24,6 +27,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import control.Config;
 import dao.ControlDB;
 import log.Log;
+import modal.Download;
 import modal.SendMail;
 import modal.WriteBug;
 
@@ -48,6 +52,41 @@ public class DataStaging {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+//	public static void main(String[] args) {
+//		DataStaging dw = new DataStaging();
+//		dw.setConfig_id(7);
+//		dw.setState("ER");
+//		DataProcess dp = new DataProcess();
+//		ControlDB cdb = new ControlDB();
+//		cdb.setConfig_db_name("controldb");
+//		cdb.setTarget_db_name("database_staging");
+//		cdb.setTable_name("config");
+//		dp.setCdb(cdb);
+//		try {
+//			dw.ExtractToDB(dp);
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+
+	public void mainStaging(int id_config)
+			throws AddressException, MessagingException, ClassNotFoundException, SQLException {
+		DataStaging dw = new DataStaging();
+		dw.setConfig_id(7);
+		dw.setState("ER");
+		DataProcess dp = new DataProcess();
+		ControlDB cdb = new ControlDB();
+		cdb.setConfig_db_name("controldb");
+		cdb.setTarget_db_name("database_staging");
+		cdb.setTable_name("config");
+		dp.setCdb(cdb);
+		dw.ExtractToDB(dp);
+
 	}
 
 	public void ExtractToDB(DataProcess dp) throws ClassNotFoundException, SQLException {
@@ -92,6 +131,10 @@ public class DataStaging {
 							values = dp.readValuesXLSX(file, str.countTokens());
 							extention = ".xlsx";
 						}
+//						else {
+//							System.out.println("TAM THOI BO QUA");
+//							break;
+//						}
 						System.out.println(values);
 						// Nếu đọc được giá trị rồi
 						if (values != null) {

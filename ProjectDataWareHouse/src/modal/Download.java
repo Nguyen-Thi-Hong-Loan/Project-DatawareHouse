@@ -15,6 +15,9 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -261,5 +264,10 @@ public class Download {
 		}
 		return 0;
 	}
+	public void mainSCP(int id_config) throws AddressException, MessagingException {
+		Download download = new Download();
+		download.saveDataFromFTPToLocal(id_config);
+		
 
+	}
 }

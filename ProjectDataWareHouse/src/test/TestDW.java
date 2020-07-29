@@ -2,32 +2,49 @@ package test;
 
 import java.sql.SQLException;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.mail.MessagingException;
 
 import dao.ControlDB;
 import etl.DataProcess;
 import etl.DataStaging;
 import modal.Download;
 
-public class TestDW {
+public class TestDW extends TimerTask {
+	static String[] listIdConfig = null;
+
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		//Bước 1: Load từ server về local:
-//		Download download = new Download();
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Nhập id config cần download: ");
-		int id = sc.nextInt();
-//		System.out.println(download.saveDataFromFTPToLocal(id));
-//		System.out.println("done");
-//		Bước 2: Load từ local vào database staging:
+		// Bước 1: Load từ server về local:
+		listIdConfig = args.clone();
+		TimerTask tasknew = new TestDW();
+		Timer timer = new Timer();
+
+		// scheduling the task at interval
+		timer.schedule(tasknew, 0, 3000);
+
+
+	}
+
+	@Override
+	public void run() {
+		Download scpObject = new Download();
 		DataStaging dw = new DataStaging();
-		dw.setConfig_id(id);
-		dw.setState("ER");
-		DataProcess dp = new DataProcess();
-		ControlDB cdb = new ControlDB();
-		cdb.setConfig_db_name("controldb");
-		cdb.setTarget_db_name("database_staging");
-		cdb.setTable_name("config");
-		dp.setCdb(cdb);
-		dw.ExtractToDB(dp);
+		for (int i = 0; i < listIdConfig.length; i++) {
+			try {
+				int id = Integer.parseInt(listIdConfig[i]);
+				scpObject.mainSCP(id);
+				dw.mainStaging(id);
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
 
 	}
 }
