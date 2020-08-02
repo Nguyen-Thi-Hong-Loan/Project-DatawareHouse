@@ -6,12 +6,9 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,14 +31,11 @@ import control.Config;
 public class Download {
 	static {
 		try {
-//			System.loadLibrary("chilkat");
 			System.load("E:\\Solfware\\chilkat-9.5.0-jdk8-x64\\chilkat.dll");
 		} catch (UnsatisfiedLinkError e) {
+			
 			// viet bug vao file va send mail
-			WriteBug wb = new WriteBug();
-			wb.writeBug(e + "");
-			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
-
+			haveABug(e + "");
 			System.exit(1);
 		}
 	}
@@ -58,9 +52,7 @@ public class Download {
 		boolean success = ssh.Connect(serverAddress, port);
 		if (!success) {
 			// viet bug vao file va send mail
-			WriteBug wb = new WriteBug();
-			wb.writeBug(ssh.lastErrorText() + "");
-			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
+			haveABug(ssh.lastErrorText() + "");
 			return false;
 		}
 
@@ -72,31 +64,36 @@ public class Download {
 		if (!success) {
 
 			// viet bug vao file va send mail
-			WriteBug wb = new WriteBug();
-			wb.writeBug(ssh.lastErrorText() + "");
-			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
-
+			haveABug(ssh.lastErrorText() + "");
 			return false;
 		}
+		
+		 // Once the SSH object is connected and authenticated, we use it
+	    // in our SCP object.
 		CkScp scp = new CkScp();
 		success = scp.UseSsh(ssh);
 		if (!success) {
 			// viet bug vao file va send mail
-			WriteBug wb = new WriteBug();
-			wb.writeBug(ssh.lastErrorText() + "");
-			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
 
+			haveABug(ssh.lastErrorText() + "");
 			return false;
 		}
+		
+		// Download synchronization modes:
+	    // mode=0: Download all files
+	    // mode=1: Download all files that do not exist on the local filesystem.
+	    // mode=2: Download newer or non-existant files.
+	    // mode=3: Download only newer files.  
+	    //         If a file does not already exist on the local filesystem, it is not downloaded from the server.
+	    // mode=5: Download only missing files or files with size differences.
+	    // mode=6: Same as mode 5, but also download newer files.
+		
 		scp.put_SyncMustMatch(format);
 		System.out.println(format);
 
 		success = scp.SyncTreeDownload(remoteFilePath, local_download_dir, 2, false);
 		if (!success) {
-			WriteBug wb = new WriteBug();
-			wb.writeBug(ssh.lastErrorText() + "");
-			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
-
+			haveABug(ssh.lastErrorText() + "");
 			return false;
 		}
 
@@ -136,16 +133,13 @@ public class Download {
 
 				boolean download = new Download().download(conf.getDirSou(), "/volume1/ECEP/song.nguyen/DW_2020/data",
 						conf.getServerSou(), conf.getPort(), conf.getUserSou(), conf.getPassSou(), conf.getFormatSou());
+				
 				if (download) {
-
 					List<String> lsFile = readLsFile(conf.getDirSou());
 					for (String fName : lsFile) {
-
 						String fileName = conf.getDirSou() + "\\" + "\\" + fName;
-						System.out.println("file:     ----   " + fileName);
 						int numColumn = (fileName.endsWith(".txt")) ? countLineTxt(fileName)
 								: (fileName.endsWith(".xlsx") ? numColumn = countFExcel(fileName) : 0);
-
 						loadLog(fName, numColumn, id, "controldb");
 
 					}
@@ -154,14 +148,14 @@ public class Download {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			haveABug(e + "");
 			return false;
 		} finally {
 			try {
 				cstm.close();
 				conn.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				haveABug(e + "");
 			}
 		}
 		return true;
@@ -184,7 +178,7 @@ public class Download {
 			cstm.close();
 			conn.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			haveABug(e + "");
 		}
 	}
 	
@@ -201,6 +195,12 @@ public class Download {
 		}
 
 		return lsFile;
+
+	}
+	public static void haveABug(String erorr) {
+		WriteBug wb = new WriteBug();
+		wb.writeBug(erorr);
+		new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
 
 	}
 
@@ -226,10 +226,9 @@ public class Download {
 			workbook.close();
 
 		} catch (EncryptedDocumentException e) {
-			e.printStackTrace();
+			haveABug(e + "");
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			haveABug(e + "");		}
 		return count;
 	}
 
@@ -260,8 +259,7 @@ public class Download {
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			haveABug(e + "");		}
 		return 0;
 	}
 	public void mainSCP(int id_config) throws AddressException, MessagingException {
