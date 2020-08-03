@@ -44,9 +44,6 @@ public class DataProcess {
 	private String readLines(String value, String delim) {
 		String values = "";
 		StringTokenizer stoken = new StringTokenizer(value, delim);
-		// if (stoken.countTokens() > 0) {
-		// stoken.nextToken();
-		// }
 		int countToken = stoken.countTokens();
 		String lines = "(";
 		for (int j = 0; j < countToken; j++) {

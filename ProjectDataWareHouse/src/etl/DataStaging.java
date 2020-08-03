@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,14 +26,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import control.Config;
 import dao.ControlDB;
 import log.Log;
-import modal.Download;
 import modal.SendMail;
 import modal.WriteBug;
 
 public class DataStaging {
-	static final String EXT_TEXT = ".txt";
-	static final String EXT_CSV = ".csv";
-	static final String EXT_EXCEL = ".xlsx";
+//	static final String EXT_TEXT = ".txt";
+//	static final String EXT_CSV = ".csv";
+//	static final String EXT_EXCEL = ".xlsx";
 	private int config_id;
 	private String state;
 
@@ -53,26 +51,6 @@ public class DataStaging {
 	public void setState(String state) {
 		this.state = state;
 	}
-//	public static void main(String[] args) {
-//		DataStaging dw = new DataStaging();
-//		dw.setConfig_id(7);
-//		dw.setState("ER");
-//		DataProcess dp = new DataProcess();
-//		ControlDB cdb = new ControlDB();
-//		cdb.setConfig_db_name("controldb");
-//		cdb.setTarget_db_name("database_staging");
-//		cdb.setTable_name("config");
-//		dp.setCdb(cdb);
-//		try {
-//			dw.ExtractToDB(dp);
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 
 	public void mainStaging(int id_config)
 			throws AddressException, MessagingException, ClassNotFoundException, SQLException {
@@ -93,12 +71,10 @@ public class DataStaging {
 		List<Config> lstConf = dp.getCdb().loadAllConfs(this.config_id);
 		// Lấy các trường trong các dòng config ra:
 		for (Config configuration : lstConf) {
-			String extention = "";
 			String target_table = configuration.getTargetTable();
 			String import_dir = configuration.getDirSou();
 			String delim = configuration.getDelimeterSou();
 			String column_list = configuration.getFieldName();
-			String variabless = configuration.getVariabless();
 			System.out.println(target_table);
 			System.out.println(import_dir);
 			// Lấy các trường có trong dòng log đầu tiên có state=ER;
@@ -114,40 +90,32 @@ public class DataStaging {
 				StringTokenizer str = new StringTokenizer(column_list, delim);
 				System.out.println(sourceFile);
 				File file = new File(sourceFile);
-				// Lấy cái đuôi file ra coi đó là kiểu file gì để xử lí đọc file
-				extention = file.getPath().endsWith(".xlsx") ? EXT_EXCEL
-						: file.getPath().endsWith(".txt") ? EXT_TEXT : EXT_CSV;
 				if (file.exists()) {
 					// Nếu log có resule là OK (thật ra cái này không cần cũng
 					// được)
 					if (log.getResult().equals("OK")) {
 						String values = "";
 						// Nếu file là .txt thì đọc file .txt
-						if (extention.equals(".txt")) {
+						if (file.getPath().endsWith(".txt")) {
 							values = dp.readValuesTXT(file, str.countTokens());
-							extention = ".txt";
 							// Nếu file là .xlsx thì đọc file .xlsx
-						} else if (extention.equals(".xlsx")) {
+						} else if (file.getPath().endsWith(".xlsx")) {
 							values = dp.readValuesXLSX(file, str.countTokens());
-							extention = ".xlsx";
+						} else {
+							System.out.println("Tam thoi bo qua");
+							break;
 						}
-//						else {
-//							System.out.println("TAM THOI BO QUA");
-//							break;
-//						}
 						System.out.println(values);
 						// Nếu đọc được giá trị rồi
 						if (values != null) {
-							String table = "log";
 							String file_status;
 							String result;
-							int config_id = configuration.getIdConf();
 							// time
 							String timestamp = getCurrentTime();
 							// count line
 							String stagin_load_count = "";
 							try {
-								stagin_load_count = countLines(file, extention) + "";
+								stagin_load_count = countLines(file) + "";
 							} catch (InvalidFormatException
 									| org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
 								e.printStackTrace();
@@ -224,12 +192,12 @@ public class DataStaging {
 	}
 
 	// Đếm số dòng trong file excel:
-	private int countLines(File file, String extention)
+	private int countLines(File file)
 			throws InvalidFormatException, org.apache.poi.openxml4j.exceptions.InvalidFormatException {
 		int result = 0;
 		XSSFWorkbook workBooks = null;
 		try {
-			if (extention.indexOf(".txt") != -1) {
+			if (file.getPath().endsWith(".txt")) {
 				BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 				String line;
 				while ((line = bReader.readLine()) != null) {
@@ -238,7 +206,7 @@ public class DataStaging {
 					}
 				}
 				bReader.close();
-			} else if (extention.indexOf(".xlsx") != -1) {
+			} else if (file.getPath().endsWith(".xlsx")) {
 				workBooks = new XSSFWorkbook(file);
 				XSSFSheet sheet = workBooks.getSheetAt(0);
 				Iterator<Row> rows = sheet.iterator();
