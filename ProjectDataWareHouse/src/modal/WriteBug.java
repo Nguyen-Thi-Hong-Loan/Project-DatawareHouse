@@ -11,18 +11,28 @@ import java.util.Date;
 public class WriteBug {
 	public static final String FILE = "text/bug.txt";
 
-	public void writeBug(String bug) {
+	public void writeBug(String mess, int i) {
 		try {
 			// Getting the Path object
 			Path path = Paths.get(FILE);
 			// Creating a BufferedWriter object
 			BufferedWriter write = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
-			// Appending the UTF-8 String to the file
-			write.append("NOTICE: " + bug + "\nTIME: " + new Date());
-			// Flushing data to the file
-			write.flush();
-			System.out.println("==========WARRING=========ERROR======== HAVE_A_BUG===========");
-
+			if (i == 1) {
+				// Appending the UTF-8 String to the file
+				write.append("NOTICE: " + mess + "\nTIME: " + new Date());
+				// Flushing data to the file
+				write.flush();
+				System.out.println("==========WARRING=========ERROR======== HAVE_A_BUG===========");
+			}
+			else {
+				// Appending the UTF-8 String to the file
+				write.append("SUCCESS: " + mess + "\nTIME: " + new Date());
+				// Flushing data to the file
+				write.flush();
+				System.out.println("==========SUCCESS=========SUSCESS========COMPLETE===========");
+			
+			}
+				
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

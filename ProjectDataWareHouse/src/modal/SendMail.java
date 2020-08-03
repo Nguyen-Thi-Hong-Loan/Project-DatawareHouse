@@ -64,7 +64,6 @@ public class SendMail {
 			// 7) send message
 			Transport.send(message);
 
-			System.out.println("Message sent file bug successfully");
 		} catch (MessagingException ex) {
 
 			ex.printStackTrace();

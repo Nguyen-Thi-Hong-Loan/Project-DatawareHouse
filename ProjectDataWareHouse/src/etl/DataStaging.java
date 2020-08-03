@@ -178,7 +178,7 @@ public class DataStaging {
 								// if (moveFile(target_dir, file))
 								// ;
 								WriteBug wb = new WriteBug();
-								wb.writeBug("Load file to staging not success!");
+								wb.writeBug("Load file to staging not success!",1);
 								new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
 							}
 						}

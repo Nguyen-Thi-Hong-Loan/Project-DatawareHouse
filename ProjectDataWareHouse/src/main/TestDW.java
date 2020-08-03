@@ -36,25 +36,25 @@ public class TestDW extends TimerTask {
 			try {
 				int id = Integer.parseInt(listIdConfig[i]);
 				System.out.println("id:  " + id);
-				
+
 				scpObject.mainSCP(id);
 				dw.mainStaging(id);
 
 			} catch (MessagingException e) {
-				haveABug(e + "");
+				haveABug(e + "", 1);
 			} catch (ClassNotFoundException e) {
-				haveABug(e + "");
+				haveABug(e + "", 1);
 			} catch (SQLException e) {
-				haveABug(e + "");
+				haveABug(e + "", 1);
 			}
 
 		}
 
 	}
 
-	public void haveABug(String erorr) {
+	public void haveABug(String erorr, int i) {
 		WriteBug wb = new WriteBug();
-		wb.writeBug(erorr);
+		wb.writeBug(erorr, i);
 		new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
 
 	}
