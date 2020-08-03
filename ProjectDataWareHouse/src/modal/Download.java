@@ -33,9 +33,9 @@ public class Download {
 		try {
 			System.load("E:\\Solfware\\chilkat-9.5.0-jdk8-x64\\chilkat.dll");
 		} catch (UnsatisfiedLinkError e) {
-			
+
 			// viet bug vao file va send mail
-			haveABug(e + "");
+			haveANotice(e + "", 1);
 			System.exit(1);
 		}
 	}
@@ -52,7 +52,7 @@ public class Download {
 		boolean success = ssh.Connect(serverAddress, port);
 		if (!success) {
 			// viet bug vao file va send mail
-			haveABug(ssh.lastErrorText() + "");
+			haveANotice(ssh.lastErrorText() + "", 1);
 			return false;
 		}
 
@@ -64,41 +64,42 @@ public class Download {
 		if (!success) {
 
 			// viet bug vao file va send mail
-			haveABug(ssh.lastErrorText() + "");
+			haveANotice(ssh.lastErrorText() + "", 1);
 			return false;
 		}
-		
-		 // Once the SSH object is connected and authenticated, we use it
-	    // in our SCP object.
+
+		// Once the SSH object is connected and authenticated, we use it
+		// in our SCP object.
 		CkScp scp = new CkScp();
 		success = scp.UseSsh(ssh);
 		if (!success) {
 			// viet bug vao file va send mail
 
-			haveABug(ssh.lastErrorText() + "");
+			haveANotice(ssh.lastErrorText() + "", 1);
 			return false;
 		}
-		
+
 		// Download synchronization modes:
-	    // mode=0: Download all files
-	    // mode=1: Download all files that do not exist on the local filesystem.
-	    // mode=2: Download newer or non-existant files.
-	    // mode=3: Download only newer files.  
-	    //         If a file does not already exist on the local filesystem, it is not downloaded from the server.
-	    // mode=5: Download only missing files or files with size differences.
-	    // mode=6: Same as mode 5, but also download newer files.
-		
+		// mode=0: Download all files
+		// mode=1: Download all files that do not exist on the local filesystem.
+		// mode=2: Download newer or non-existant files.
+		// mode=3: Download only newer files.
+		// If a file does not already exist on the local filesystem, it is not
+		// downloaded from the server.
+		// mode=5: Download only missing files or files with size differences.
+		// mode=6: Same as mode 5, but also download newer files.
+
 		scp.put_SyncMustMatch(format);
-		System.out.println(format);
 
 		success = scp.SyncTreeDownload(remoteFilePath, local_download_dir, 2, false);
 		if (!success) {
-			haveABug(ssh.lastErrorText() + "");
+			haveANotice(ssh.lastErrorText() + "", 1);
 			return false;
 		}
 
-		System.out.println("SCP download file success.");
 		ssh.Disconnect();
+		System.out.println("SCP download file success.");
+//		haveANotice("SCP download file success.", 2);
 		return true;
 
 	}
@@ -133,7 +134,7 @@ public class Download {
 
 				boolean download = new Download().download(conf.getDirSou(), "/volume1/ECEP/song.nguyen/DW_2020/data",
 						conf.getServerSou(), conf.getPort(), conf.getUserSou(), conf.getPassSou(), conf.getFormatSou());
-				
+
 				if (download) {
 					List<String> lsFile = readLsFile(conf.getDirSou());
 					for (String fName : lsFile) {
@@ -147,15 +148,16 @@ public class Download {
 
 			}
 
+			haveANotice("SUCCESS", 2);
 		} catch (Exception e) {
-			haveABug(e + "");
+			haveANotice(e + "", 1);
 			return false;
 		} finally {
 			try {
 				cstm.close();
 				conn.close();
 			} catch (SQLException e) {
-				haveABug(e + "");
+				haveANotice(e + "", 1);
 			}
 		}
 		return true;
@@ -172,16 +174,16 @@ public class Download {
 			cstm.setInt(2, num);
 			cstm.setInt(3, idCf);
 			System.out.println(cstm.execute());
-			
+
 			System.out.println("ghi log thanh cong");
+//			haveANotice("ghi log thanh cong", 2);
 
 			cstm.close();
 			conn.close();
 		} catch (Exception e) {
-			haveABug(e + "");
+			haveANotice(e + "", 1);
 		}
 	}
-	
 
 	// read a list file
 	public static List<String> readLsFile(String directory) {
@@ -197,9 +199,10 @@ public class Download {
 		return lsFile;
 
 	}
-	public static void haveABug(String erorr) {
+
+	public static void haveANotice(String erorr, int i) {
 		WriteBug wb = new WriteBug();
-		wb.writeBug(erorr);
+		wb.writeBug(erorr, i);
 		new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
 
 	}
@@ -226,9 +229,10 @@ public class Download {
 			workbook.close();
 
 		} catch (EncryptedDocumentException e) {
-			haveABug(e + "");
+			haveANotice(e + "", 1);
 		} catch (IOException e) {
-			haveABug(e + "");		}
+			haveANotice(e + "", 1);
+		}
 		return count;
 	}
 
@@ -259,13 +263,14 @@ public class Download {
 			}
 
 		} catch (IOException e) {
-			haveABug(e + "");		}
+			haveANotice(e + "", 1);
+		}
 		return 0;
 	}
+
 	public void mainSCP(int id_config) throws AddressException, MessagingException {
 		Download download = new Download();
 		download.saveDataFromFTPToLocal(id_config);
-		
 
 	}
 }
