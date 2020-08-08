@@ -9,14 +9,18 @@ import java.nio.file.Paths;
 import java.util.Date;
 
 public class WriteBug {
-	public static final String FILE = "text/bug.txt";
+	public static final String FILE_BUG = "F:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\PROJECT\\bug.txt";
+	public static final String FILE_SUCCESS = "F:\\Tai_Lieu\\HK2-----3\\DatawareHouse\\PROJECT\\success.txt";
 
 	public void writeBug(String mess, int i) {
 		try {
+			
 			// Getting the Path object
-			Path path = Paths.get(FILE);
+			Path path = Paths.get(FILE_BUG);
+			Path pathsucc = Paths.get(FILE_BUG);
 			// Creating a BufferedWriter object
 			BufferedWriter write = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
+			BufferedWriter writesucc = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
 			if (i == 1) {
 				// Appending the UTF-8 String to the file
 				write.append("NOTICE: " + mess + "\nTIME: " + new Date());
@@ -26,9 +30,9 @@ public class WriteBug {
 			}
 			else {
 				// Appending the UTF-8 String to the file
-				write.append("SUCCESS: " + mess + "\nTIME: " + new Date());
+				writesucc.append("SUCCESS: " + mess + "\nTIME: " + new Date());
 				// Flushing data to the file
-				write.flush();
+				writesucc.flush();
 				System.out.println("==========SUCCESS=========SUSCESS========COMPLETE===========");
 			
 			}

@@ -1,4 +1,5 @@
-/test/
 /modal/
-/main/
 /etl/
+/main/
+/connection/
+/dao/

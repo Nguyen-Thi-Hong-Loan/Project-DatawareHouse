@@ -37,7 +37,10 @@ public class TestDW extends TimerTask {
 				int id = Integer.parseInt(listIdConfig[i]);
 				System.out.println("id:  " + id);
 
+				// run b.1
 				scpObject.mainSCP(id);
+
+				// run b.2
 				dw.mainStaging(id);
 
 			} catch (MessagingException e) {
@@ -55,7 +58,9 @@ public class TestDW extends TimerTask {
 	public void haveABug(String erorr, int i) {
 		WriteBug wb = new WriteBug();
 		wb.writeBug(erorr, i);
-		new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
-
+		if (i == 1) {
+			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_BUG);
+		} else
+			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_SUCCESS);
 	}
 }
