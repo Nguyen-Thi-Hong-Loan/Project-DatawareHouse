@@ -15,7 +15,7 @@ NOTICE: ChilkatLog:
           connect_ipv6_or_ipv4:
             Connection attempt failed.
             maxWaitTimeMs: 30000
-            totalMsWaitedSoFar: 16850
+            totalMsWaitedSoFar: 18300
           --connect_ipv6_or_ipv4
         --connectSocket
         Failed to establish initial TCP/IP connection
@@ -27,4 +27,4 @@ NOTICE: ChilkatLog:
   --Connect_Ssh
 --ChilkatLog
 
-TIME: Sun Aug 02 22:21:08 ICT 2020
+TIME: Mon Aug 03 20:29:37 ICT 2020

@@ -31,7 +31,7 @@ import control.Config;
 public class Download {
 	static {
 		try {
-			System.load("E:\\Solfware\\chilkat-9.5.0-jdk8-x64\\chilkat.dll");
+			System.load("E:\\Solfware\\chilkat-9.5.0-jdk8-x64\\chilkat-9.5.0-jdk8-x64\\chilkat.dll");
 		} catch (UnsatisfiedLinkError e) {
 
 			// viet bug vao file va send mail
@@ -144,11 +144,11 @@ public class Download {
 						loadLog(fName, numColumn, id, "controldb");
 
 					}
+					haveANotice("SUCCESS", 2);
 				}
 
 			}
 
-			haveANotice("SUCCESS", 2);
 		} catch (Exception e) {
 			haveANotice(e + "", 1);
 			return false;
@@ -203,8 +203,11 @@ public class Download {
 	public static void haveANotice(String erorr, int i) {
 		WriteBug wb = new WriteBug();
 		wb.writeBug(erorr, i);
-		new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
-
+		if (i == 1) {
+			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_BUG);
+		}
+		else
+			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_SUCCESS);
 	}
 
 	// count row in file excel

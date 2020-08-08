@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,9 +31,9 @@ import modal.SendMail;
 import modal.WriteBug;
 
 public class DataStaging {
-//	static final String EXT_TEXT = ".txt";
-//	static final String EXT_CSV = ".csv";
-//	static final String EXT_EXCEL = ".xlsx";
+	// static final String EXT_TEXT = ".txt";
+	// static final String EXT_CSV = ".csv";
+	// static final String EXT_EXCEL = ".xlsx";
 	private int config_id;
 	private String state;
 
@@ -125,6 +126,12 @@ public class DataStaging {
 							// thì mình ghi dữ liệu vô bảng
 							// nếu mình ghi được dữ liệu vô bảng
 							if (dp.writeDataToBD(column_list, target_table, values)) {
+								// Move to warehouse
+								// Chon tat ca cac dong trong table
+								// student(db_staging) -> luu vao doi tuong
+								// ResultSet
+								ResultSet allRecored = ControlDB.selectAllField("database_staging", target_table);
+								dp.writeDataToWareHouse(allRecored);
 								file_status = "TR";
 								result = "OK";
 								// update cái log lại, chuyển file đã extract
@@ -146,8 +153,8 @@ public class DataStaging {
 								// if (moveFile(target_dir, file))
 								// ;
 								WriteBug wb = new WriteBug();
-								wb.writeBug("Load file to staging not success!",1);
-								new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE);
+								wb.writeBug("Load file to staging not success!", 1);
+								new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_BUG);
 							}
 						}
 					}

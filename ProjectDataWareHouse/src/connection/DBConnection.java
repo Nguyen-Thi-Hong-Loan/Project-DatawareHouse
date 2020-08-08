@@ -48,7 +48,7 @@ public class DBConnection {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			String connectionURL = "jdbc:sqlserver://" + hostName + ";databaseName=" + dbName;
 			conn = DriverManager.getConnection(connectionURL, userName, password);
-			System.out.println("ket not thanh cong");
+			System.out.println("ket not sql server thanh cong ");
 			return conn;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -56,14 +56,4 @@ public class DBConnection {
 		}
 	}
 
-	public static void main(String[] args) throws SQLException {
-		PreparedStatement pst = DBConnection.getConnection("controldb").prepareStatement("select * from config");
-		ResultSet rs = pst.executeQuery();
-		rs.last();
-		System.out.println(rs.getRow());
-		rs.beforeFirst();
-		while (rs.next()) {
-			System.out.println(rs.getString(3));
-		}
-	}
 }
