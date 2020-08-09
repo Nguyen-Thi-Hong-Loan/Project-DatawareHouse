@@ -207,7 +207,7 @@ public class Download {
 			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_BUG);
 		}
 		else
-			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_SUCCESS);
+			new SendMail().sendMail("SUCCESSFUL", "NOTICE", wb.FILE_SUCCESS);
 	}
 
 	// count row in file excel

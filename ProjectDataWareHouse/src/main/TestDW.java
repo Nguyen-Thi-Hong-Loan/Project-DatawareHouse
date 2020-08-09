@@ -2,8 +2,6 @@ package main;
 
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.mail.MessagingException;
 
@@ -12,22 +10,11 @@ import modal.Download;
 import modal.SendMail;
 import modal.WriteBug;
 
-public class TestDW extends TimerTask {
-	static String[] listIdConfig = null;
-
+public class TestDW {
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		// Bước 1: Load từ server về local:
-		listIdConfig = args.clone();
-		TimerTask tasknew = new TestDW();
-		Timer timer = new Timer();
+		String[] listIdConfig = args.clone();
 
-		// scheduling the task at interval
-		timer.schedule(tasknew, 0, 10000);
-
-	}
-
-	@Override
-	public void run() {
 		System.out.println("Run my job: " + new Date());
 		Download scpObject = new Download();
 		DataStaging dw = new DataStaging();
@@ -55,12 +42,12 @@ public class TestDW extends TimerTask {
 
 	}
 
-	public void haveABug(String erorr, int i) {
+	public static void haveABug(String erorr, int i) {
 		WriteBug wb = new WriteBug();
 		wb.writeBug(erorr, i);
 		if (i == 1) {
 			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_BUG);
 		} else
-			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_SUCCESS);
+			new SendMail().sendMail("SUCCESSFUL", "NOTICE", wb.FILE_SUCCESS);
 	}
 }
