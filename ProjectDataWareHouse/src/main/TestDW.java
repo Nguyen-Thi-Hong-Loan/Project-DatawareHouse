@@ -8,7 +8,6 @@ import javax.mail.MessagingException;
 import etl.DataStaging;
 import modal.Download;
 import modal.SendMail;
-import modal.WriteBug;
 
 public class TestDW {
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
@@ -27,28 +26,23 @@ public class TestDW {
 				// run b.1
 				scpObject.mainSCP(id);
 
-				System.out.println("Run B2");
+				System.out.println("==============Run B2=====================");
 				// run b.2
 				dw.mainStaging(id);
 
 			} catch (MessagingException e) {
 				haveABug(e + "", 1);
-			} catch (ClassNotFoundException e) {
-				haveABug(e + "", 1);
-			} catch (SQLException e) {
-				haveABug(e + "", 1);
 			}
-
 		}
 
 	}
 
-	public static void haveABug(String erorr, int i) {
-		WriteBug wb = new WriteBug();
-		wb.writeBug(erorr, i);
+	public static void haveABug(String mess, int i) {
+		String sendMess = "TIME: " + new Date() + "\n" + mess;
+
 		if (i == 1) {
-			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_BUG);
+			new SendMail().sendMail("We have a bug", "NOTICE", sendMess);
 		} else
-			new SendMail().sendMail("SUCCESSFUL", "NOTICE", wb.FILE_SUCCESS);
+			new SendMail().sendMail("SUCCESSFUL", "NOTICE", sendMess);
 	}
 }

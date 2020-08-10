@@ -28,7 +28,6 @@ import control.Config;
 import dao.ControlDB;
 import log.Log;
 import modal.SendMail;
-import modal.WriteBug;
 
 public class DataStaging {
 	// static final String EXT_TEXT = ".txt";
@@ -72,13 +71,13 @@ public class DataStaging {
 	public void ExtractToDB(DataProcess dp) throws ClassNotFoundException, SQLException {
 		Config configuration = dp.getCdb().loadAllConfs(this.config_id);
 		// Lấy các trường trong một dòng config ra:
-		//Lấy bảng trong database_staging, vd:student
+		// Lấy bảng trong database_staging, vd:student
 		String target_table = configuration.getTargetTable();
-		//Lấy ra thư lục chứa file
+		// Lấy ra thư lục chứa file
 		String import_dir = configuration.getDirSou();
-		//Lấy dấu phân cách
+		// Lấy dấu phân cách
 		String delim = configuration.getDelimeterSou();
-		//Lấy ra danh sách các trường
+		// Lấy ra danh sách các trường
 		String column_list = configuration.getFieldName();
 		System.out.println(target_table);
 		System.out.println(import_dir);
@@ -154,9 +153,7 @@ public class DataStaging {
 						target_dir = configuration.getErrorDir();
 						// if (moveFile(target_dir, file))
 						// ;
-						WriteBug wb = new WriteBug();
-						wb.writeBug("Load file to staging not success!", 1);
-						new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_BUG);
+						new SendMail().sendMail("We have a bug", "NOTICE", "Load file to staging not success!");
 					}
 				}
 			}
