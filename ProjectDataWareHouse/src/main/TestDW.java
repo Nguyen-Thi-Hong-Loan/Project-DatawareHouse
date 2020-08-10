@@ -27,6 +27,7 @@ public class TestDW {
 				// run b.1
 				scpObject.mainSCP(id);
 
+				System.out.println("Run B2");
 				// run b.2
 				dw.mainStaging(id);
 

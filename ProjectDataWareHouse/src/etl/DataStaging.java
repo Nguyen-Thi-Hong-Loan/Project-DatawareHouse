@@ -53,10 +53,11 @@ public class DataStaging {
 		this.state = state;
 	}
 
+//Hàm main để chạy task schedule:
 	public void mainStaging(int id_config)
 			throws AddressException, MessagingException, ClassNotFoundException, SQLException {
 		DataStaging dw = new DataStaging();
-		dw.setConfig_id(7);
+		dw.setConfig_id(id_config);
 		dw.setState("ER");
 		DataProcess dp = new DataProcess();
 		ControlDB cdb = new ControlDB();
@@ -69,102 +70,100 @@ public class DataStaging {
 	}
 
 	public void ExtractToDB(DataProcess dp) throws ClassNotFoundException, SQLException {
-		List<Config> lstConf = dp.getCdb().loadAllConfs(this.config_id);
-		// Lấy các trường trong các dòng config ra:
-		for (Config configuration : lstConf) {
-			String target_table = configuration.getTargetTable();
-			String import_dir = configuration.getDirSou();
-			String delim = configuration.getDelimeterSou();
-			String column_list = configuration.getFieldName();
-			System.out.println(target_table);
-			System.out.println(import_dir);
-			// Lấy các trường có trong dòng log đầu tiên có state=ER;
-			// Log log = dp.getCdb().getLogsWithStatus(this.state,
-			// this.config_id);
-			List<Log> lstLog = dp.getCdb().getLog(this.state, this.config_id);
-			for (Log log : lstLog) {
-				// Lấy file_name từ trong config ra
-				String file_name = log.getFileName();
-				// Ráp với importDir đề được cái đường dẫn tới file
-				String sourceFile = import_dir + File.separator + file_name;
-				// Đếm số trường trong filedName ở trong bảng config
-				StringTokenizer str = new StringTokenizer(column_list, delim);
-				System.out.println(sourceFile);
-				File file = new File(sourceFile);
-				if (file.exists()) {
-					// Nếu log có resule là OK (thật ra cái này không cần cũng
-					// được)
-					if (log.getResult().equals("OK")) {
-						String values = "";
-						// Nếu file là .txt thì đọc file .txt
-						if (file.getPath().endsWith(".txt")) {
-							values = dp.readValuesTXT(file, str.countTokens());
-							// Nếu file là .xlsx thì đọc file .xlsx
-						} else if (file.getPath().endsWith(".xlsx")) {
-							values = dp.readValuesXLSX(file, str.countTokens());
-						} else {
-							System.out.println("Tam thoi bo qua");
-							break;
-						}
-						System.out.println(values);
-						// Nếu đọc được giá trị rồi
-						if (values != null) {
-							String file_status;
-							String result;
-							// time
-							String timestamp = getCurrentTime();
-							// count line
-							String stagin_load_count = "";
-							try {
-								stagin_load_count = countLines(file) + "";
-							} catch (InvalidFormatException
-									| org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
-								e.printStackTrace();
-							}
+		Config configuration = dp.getCdb().loadAllConfs(this.config_id);
+		// Lấy các trường trong một dòng config ra:
+		//Lấy bảng trong database_staging, vd:student
+		String target_table = configuration.getTargetTable();
+		//Lấy ra thư lục chứa file
+		String import_dir = configuration.getDirSou();
+		//Lấy dấu phân cách
+		String delim = configuration.getDelimeterSou();
+		//Lấy ra danh sách các trường
+		String column_list = configuration.getFieldName();
+		System.out.println(target_table);
+		System.out.println(import_dir);
+		// Lấy các trường có trong dòng log đầu tiên có state=ER;
+		Log log = dp.getCdb().getLogsWithStatus(this.state, this.config_id);
+		// Lấy file_name từ trong config ra
+		String file_name = log.getFileName();
+		// Ráp với importDir đề được cái đường dẫn tới file
+		String sourceFile = import_dir + File.separator + file_name;
+		// Đếm số trường trong filedName ở trong bảng config
+		StringTokenizer str = new StringTokenizer(column_list, delim);
+		System.out.println(sourceFile);
+		File file = new File(sourceFile);
+		if (file.exists()) {
+			// Nếu log có resule là OK (thật ra cái này không cần cũng
+			// được)
+			if (log.getResult().equals("OK")) {
+				String values = "";
+				// Nếu file là .txt thì đọc file .txt
+				if (file.getPath().endsWith(".txt")) {
+					values = dp.readValuesTXT(file, str.countTokens());
+					// Nếu file là .xlsx thì đọc file .xlsx
+				} else if (file.getPath().endsWith(".xlsx")) {
+					values = dp.readValuesXLSX(file, str.countTokens());
+				} else {
+					System.out.println("Tam thoi bo qua");
 
-							String target_dir;
-							// thì mình ghi dữ liệu vô bảng
-							// nếu mình ghi được dữ liệu vô bảng
-							if (dp.writeDataToBD(column_list, target_table, values)) {
-								// Move to warehouse
-								// Chon tat ca cac dong trong table
-								// student(db_staging) -> luu vao doi tuong
-								// ResultSet
-								ResultSet allRecored = ControlDB.selectAllField("database_staging", target_table);
-								dp.writeDataToWareHouse(allRecored);
-								file_status = "TR";
-								result = "OK";
-								// update cái log lại, chuyển file đã extract
-								// xong
-								// vào thư mục success
-								dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
-								target_dir = configuration.getSuccessDir();
-								// if (moveFile(target_dir, file))
-								// ;
-
-							} else {
-								// Nếu mà bị lỗi thì update log là state=Not TR
-								// và
-								// result=FAIL và ghi file vào thư mục error
-								file_status = "Not TR";
-								result = "FAIL";
-								dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
-								target_dir = configuration.getErrorDir();
-								// if (moveFile(target_dir, file))
-								// ;
-								WriteBug wb = new WriteBug();
-								wb.writeBug("Load file to staging not success!", 1);
-								new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_BUG);
-							}
-						}
+				}
+				System.out.println(values);
+				// Nếu đọc được giá trị rồi
+				if (values != null) {
+					String file_status;
+					String result;
+					// time
+					String timestamp = getCurrentTime();
+					// count line
+					String stagin_load_count = "";
+					try {
+						stagin_load_count = countLines(file) + "";
+					} catch (InvalidFormatException | org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
+						e.printStackTrace();
 					}
 
-				} else {
-					System.out.println("Path not exists!!!");
-					return;
+					String target_dir;
+					// thì mình ghi dữ liệu vô bảng
+					// nếu mình ghi được dữ liệu vô bảng
+					if (dp.writeDataToBD(column_list, target_table, values)) {
+						// Move to warehouse
+						// Chon tat ca cac dong trong table
+						// student(db_staging) -> luu vao doi tuong
+						// ResultSet
+
+//								ResultSet allRecored = ControlDB.selectAllField("database_staging", target_table);
+//								dp.writeDataToWareHouse(allRecored);
+
+						file_status = "TR";
+						result = "OK";
+						// update cái log lại, chuyển file đã extract
+						// xong
+						// vào thư mục success
+						dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
+						target_dir = configuration.getSuccessDir();
+						// if (moveFile(target_dir, file))
+						// ;
+
+					} else {
+						// Nếu mà bị lỗi thì update log là state=Not TR
+						// và
+						// result=FAIL và ghi file vào thư mục error
+						file_status = "Not TR";
+						result = "FAIL";
+						dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
+						target_dir = configuration.getErrorDir();
+						// if (moveFile(target_dir, file))
+						// ;
+						WriteBug wb = new WriteBug();
+						wb.writeBug("Load file to staging not success!", 1);
+						new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_BUG);
+					}
 				}
 			}
 
+		} else {
+			System.out.println("Path not exists!!!");
+			return;
 		}
 
 	}
