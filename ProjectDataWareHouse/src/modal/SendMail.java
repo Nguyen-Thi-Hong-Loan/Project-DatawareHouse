@@ -18,7 +18,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 public class SendMail {
-	public void sendMail(String text, String ob, String fileName) {
+	public void sendMail(String text, String ob, String mess) {
 
 		// 1) get the session object
 		Properties props = new Properties();
@@ -37,32 +37,12 @@ public class SendMail {
 		// 2) compose message
 		try {
 			MimeMessage message = new MimeMessage(session);
-			message.setFrom(new InternetAddress(MailConfig.APP_EMAIL));
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(MailConfig.RECEIVE_EMAIL));
 			message.setSubject(ob);
+			message.setText(mess);
 
-			// 3) create MimeBodyPart object and set your message text
-			BodyPart messageBodyPart1 = new MimeBodyPart();
-			messageBodyPart1.setText(text);
-
-			// 4) create new MimeBodyPart object and set DataHandler object to this object
-			MimeBodyPart messageBodyPart2 = new MimeBodyPart();
-
-			String fileN = fileName;
-			DataSource source = new FileDataSource(fileN);
-			messageBodyPart2.setDataHandler(new DataHandler(source));
-			messageBodyPart2.setFileName(fileN);
-
-			// 5) create Multipart object and add MimeBodyPart objects to this object
-			Multipart multipart = new MimeMultipart();
-			multipart.addBodyPart(messageBodyPart1);
-			multipart.addBodyPart(messageBodyPart2);
-
-			// 6) set the multiplart object to the message object
-			message.setContent(multipart);
-
-			// 7) send message
 			Transport.send(message);
+			System.out.println("Message sent successfully");
 
 		} catch (MessagingException ex) {
 

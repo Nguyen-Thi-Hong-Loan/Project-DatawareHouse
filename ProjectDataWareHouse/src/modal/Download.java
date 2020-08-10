@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -62,7 +63,6 @@ public class Download {
 		// Authenticate using login/password:
 		success = ssh.AuthenticatePw(username, password);
 		if (!success) {
-
 			// viet bug vao file va send mail
 			haveANotice(ssh.lastErrorText() + "", 1);
 			return false;
@@ -99,7 +99,6 @@ public class Download {
 
 		ssh.Disconnect();
 		System.out.println("SCP download file success.");
-//		haveANotice("SCP download file success.", 2);
 		return true;
 
 	}
@@ -117,7 +116,7 @@ public class Download {
 			// Set parameter values
 			cstm.setInt(1, id);
 			ResultSet rs = cstm.executeQuery();
-
+			System.out.println("runnnnnnnnnnnnnn");
 			if (rs.next()) {
 				Config conf = new Config();
 				conf.setIdConf(rs.getInt("idConfig"));
@@ -134,10 +133,12 @@ public class Download {
 
 				boolean download = new Download().download(conf.getDirSou(), "/volume1/ECEP/song.nguyen/DW_2020/data",
 						conf.getServerSou(), conf.getPort(), conf.getUserSou(), conf.getPassSou(), conf.getFormatSou());
-
+				System.out.println(download + "lllllllllllllll");
 				if (download) {
 					List<String> lsFile = readLsFile(conf.getDirSou());
+					System.out.println(lsFile);
 					for (String fName : lsFile) {
+						System.out.println("================" + fName);
 						String fileName = conf.getDirSou() + "\\" + "\\" + fName;
 						int numColumn = (fileName.endsWith(".txt")) ? countLineTxt(fileName)
 								: (fileName.endsWith(".xlsx") ? numColumn = countFExcel(fileName) : 0);
@@ -200,14 +201,15 @@ public class Download {
 
 	}
 
-	public static void haveANotice(String erorr, int i) {
-		WriteBug wb = new WriteBug();
-		wb.writeBug(erorr, i);
+	public static void haveANotice(String mess, int i) {
+//		WriteBug wb = new WriteBug();
+//		wb.writeBug(erorr, i);
+		String sendMess = "TIME: " + new Date() + "\n" + mess;
+
 		if (i == 1) {
-			new SendMail().sendMail("We have a bug", "NOTICE", wb.FILE_BUG);
-		}
-		else
-			new SendMail().sendMail("SUCCESSFUL", "NOTICE", wb.FILE_SUCCESS);
+			new SendMail().sendMail("We have a bug", "NOTICE", sendMess);
+		} else
+			new SendMail().sendMail("SUCCESSFUL", "NOTICE", sendMess);
 	}
 
 	// count row in file excel
@@ -276,4 +278,5 @@ public class Download {
 		download.saveDataFromFTPToLocal(id_config);
 
 	}
+
 }
