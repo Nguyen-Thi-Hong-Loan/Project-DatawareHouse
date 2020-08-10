@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.Properties;
 
 import control.Config;
+import dao.ControlDB;
 import log.Log;
 import modal.SendMail;
 import modal.WriteBug;
 
-public  class DBConnection {
-
+public class DBConnection {
+	// Phương thức tạo kết nối với databse:
 	@SuppressWarnings("unused")
 	public static Connection getConnection(String db_Name) {
 		Connection con = null;
@@ -37,14 +38,22 @@ public  class DBConnection {
 		}
 	}
 
-	public static void main(String[] args) throws SQLException {
-		PreparedStatement pst = DBConnection.getConnection("dbcontrol").prepareStatement("select * from config");
-		ResultSet rs = pst.executeQuery();
-		rs.last();
-		System.out.println(rs.getRow());
-		rs.beforeFirst();
-		while (rs.next()) {
-			System.out.println(rs.getString(3));
+	public static Connection getConSQL(String dbName) {
+		try {
+			String hostName = "localhost";
+			String userName = "sa";
+			String password = "1234567890@";
+			// dang ky driver
+			Connection conn;
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String connectionURL = "jdbc:sqlserver://" + hostName + ";databaseName=" + dbName;
+			conn = DriverManager.getConnection(connectionURL, userName, password);
+			System.out.println("ket not sql server thanh cong ");
+			return conn;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
+
 }
