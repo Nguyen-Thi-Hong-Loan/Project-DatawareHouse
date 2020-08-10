@@ -118,7 +118,7 @@ public class Download {
 			cstm.setInt(1, id);
 			ResultSet rs = cstm.executeQuery();
 
-			while (rs.next()) {
+			if (rs.next()) {
 				Config conf = new Config();
 				conf.setIdConf(rs.getInt("idConfig"));
 				conf.setServerSou(rs.getString("serverSou"));
