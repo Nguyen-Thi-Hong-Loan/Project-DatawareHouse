@@ -1,13 +1,5 @@
 package control;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
-import connection.DBConnection;
-
 public class Config {
 	// Các trường của Loan
 	private int idConf;
@@ -31,7 +23,6 @@ public class Config {
 	private String importDir;
 	private String successDir;
 	private String errorDir;
-	private String variabless;
 
 	public Config() {
 
@@ -113,9 +104,6 @@ public class Config {
 		return errorDir;
 	}
 
-	public String getVariabless() {
-		return variabless;
-	}
 
 	public void setIdConf(int idConf) {
 		this.idConf = idConf;
@@ -193,19 +181,6 @@ public class Config {
 		this.errorDir = errorDir;
 	}
 
-	public void setVariabless(String variabless) {
-		this.variabless = variabless;
-	}
-
-	@Override
-	public String toString() {
-		return "Config [idConf=" + idConf + ", configName=" + configName + ", serverSou=" + serverSou + ", port=" + port
-				+ ", userSou=" + userSou + ", passSou=" + passSou + ", dirSou=" + dirSou + ", fieldName=" + fieldName
-				+ ", delimeterSou=" + delimeterSou + ", formatSou=" + formatSou + ", serverDes=" + serverDes
-				+ ", DBNameDes=" + DBNameDes + ", useDes=" + useDes + ", passDes=" + passDes + ", targetTable="
-				+ targetTable + ", fileType=" + fileType + ", importDir=" + importDir + ", successDir=" + successDir
-				+ ", errorDir=" + errorDir + ", variabless=" + variabless + "]";
-	}
 
 
 }

@@ -58,76 +58,19 @@ public class ControlDB {
 	public void setTable_name(String table_name) {
 		this.table_name = table_name;
 	}
-	public void truncateTable(String db_name,String table_name) {
-		String sql;
-		Connection connection = null;
-		PreparedStatement pst=null;
-		try {
-			sql = "TRUNCATE " + table_name;
-			connection =  DBConnection.getConnection(db_name);
-			pst = connection.prepareStatement(sql);
-			pst.executeUpdate();
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		} finally {
-			try {
-				if (pst != null)
-					pst.close();
-				if (connection != null)
-					connection.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	public static ResultSet selectAllField(String db_name, String table_name) {
-		String sql = "";
-		ResultSet rs = null;
-		try {
-			sql = "select * from " + table_name;
-			Connection conn = DBConnection.getConnection(db_name);
-			PreparedStatement ps = conn.prepareStatement(sql);
-			rs = ps.executeQuery();
-			return rs;
-		} catch (SQLException e) {
-			return null;
-		}
-	}
-	//abc de fs
-	
-	
-	public void insertValuesToWareHouse(String value) {
-		String colum_list = "(mssv,firstname,lastname,dob,classid,classname,sdt,email,address,note)";
-		PreparedStatement ps = null;
-		try {
-			String sql = "INSERT INTO STUDENT"+colum_list+" VALUES " + value;
-			Connection conn = DBConnection.getConnection("database_warehouse");
-			 ps = conn.prepareStatement(sql);
-			ps.executeUpdate();
-		} catch (SQLException e) {
-			
-		}finally {
-			if(ps!=null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	// Phuong thuc lay cac thuoc tinh co trong bang config:
-	public List<Config> loadAllConfs(String condition) throws SQLException {
-		List<Config> listConfig = new ArrayList<Config>();
-		Connection conn = DBConnection.getConnection("controldb");
-		String selectConfig = "select * from config where configName=?";
-		PreparedStatement ps = conn.prepareStatement(selectConfig);
-		ps.setString(1, condition);
-		ResultSet rs = ps.executeQuery();
 
-		while (rs.next()) {
-			Config conf = new Config();
+	// Phương thức lấy tất cả các thuộc tính có trong bảng config (lấy tất cả
+	// các dòng config) lấy theo condition là idConfig (1:sinhvien, 2:monhoc,
+	// 3:dangky, 4:lophoc)
+	public Config loadAllConfs(int condition) throws SQLException {
+		Config conf = new Config();
+//		Connection conn = DBConnection.getConnection("controldb");
+		Connection conn = DBConnection.getConSQL("controldb");
+		String selectConfig = "select * from config where idConfig=?";
+		PreparedStatement ps = conn.prepareStatement(selectConfig);
+		ps.setInt(1, condition);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
 			conf.setIdConf(rs.getInt("idConfig"));
 			conf.setConfigName(rs.getString("configName"));
 			conf.setServerSou(rs.getString("serverSou"));
@@ -147,63 +90,42 @@ public class ControlDB {
 			conf.setImportDir(rs.getString("importDir"));
 			conf.setSuccessDir(rs.getString("successDir"));
 			conf.setErrorDir(rs.getString("errorDir"));
-			conf.setVariabless(rs.getString("variabless"));
-			listConfig.add(conf);
 		}
-		return listConfig;
+		return conf;
 	}
 
-	// Phuong thuc lay cac thuoc tinh co trong bang log:
-	public Log getLogsWithStatus(String condition) throws SQLException {
-		// List<Log> listLog = new ArrayList<Log>();
+	// Phương thức lấy một dòng log đầu tiên trong table log có state = ER, idConfig=?
+	public Log getLogsWithStatus(String condition, int id_config) throws SQLException {
 		Log log = new Log();
-		Connection conn = DBConnection.getConnection("controldb");
-		String selectLog = "select * from log where state=?";
+//		Connection conn = DBConnection.getConnection("controldb");
+		Connection conn = DBConnection.getConSQL("controldb");
+		String selectLog = "select * from log where state=? and idConfig=?";
 		PreparedStatement ps = conn.prepareStatement(selectLog);
 		ps.setString(1, condition);
+		ps.setInt(2, id_config);
 		ResultSet rs = ps.executeQuery();
-		rs.last();
-		if (rs.getRow() >= 1) {
-			rs.first();
+		if (rs.next()) {
 			log.setIdLog(rs.getInt("idlog"));
 			log.setIdConfig(rs.getInt("idConfig"));
 			log.setState(rs.getString("state"));
 			log.setResult(rs.getString("result"));
-			log.setNumColumn(rs.getInt("numColumn"));
+			log.setNumColumn(rs.getInt("numRow"));
 			log.setFileName(rs.getString("fileName"));
 		}
 		return log;
 	}
 
-	// Kiem tra bang co ton tai hay chua:
-//	public boolean tableExist(String table_name) throws ClassNotFoundException {
-//		try {
-//			DatabaseMetaData dbm = DBConnection.getConnection(this.target_db_name).getMetaData();
-//			ResultSet tables = dbm.getTables(null, null, table_name, null);
-//			try {
-//				if (tables.next()) {
-//					return true;
-//				}
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//				return false;
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			return false;
-//		}
-//
-//		return false;
-//	}
-
-	// Chen du lieu vao bang trong database staging:
+	// Phương thức chèn giá trị đọc được ở bên dataprocess vào bảng có trong database staging, giá trị có
+	// được từ quá trình đọc file (file .txt hoặc file .xlsx):
 	public boolean insertValues(String fieldName, String values, String targetTable) throws ClassNotFoundException {
 		sql = "INSERT INTO " + targetTable + "(" + fieldName + ") VALUES " + values;
 		System.out.println(sql);
 		try {
-			pst = DBConnection.getConnection(this.target_db_name).prepareStatement(sql);
+//			pst = DBConnection.getConnection(this.target_db_name).prepareStatement(sql);
+
+			pst = DBConnection.getConSQL(this.target_db_name).prepareStatement(sql);
 			pst.executeUpdate();
-			return true;
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -218,9 +140,11 @@ public class ControlDB {
 			}
 
 		}
+		return true;
 	}
 
-	// Chen du lieu vao log:
+	// Phương thức chèn dữ liệu vào log (tạm thời bước 2 không dùng đến phương
+	// thức này):
 	public boolean insertLog(String table, String file_status, int config_id, String timestamp,
 			String stagin_load_count, String file_name) throws ClassNotFoundException {
 		sql = "INSERT INTO " + table + "(dataFileName,idConfig,state,numColumn,dateUserInsert) value (?,?,?,?,?)";
@@ -249,11 +173,16 @@ public class ControlDB {
 		}
 	}
 
+	// Phương thức update lại log sau khi đã extract file từ local lên
+	// datastaging thành công, cập nhật lại state=TR, result=OK,
+	// dateLoadToStaging=getCurrentTime();
 	public boolean updateLogAfterLoadToStaging(String status, String result, String fileTimeStamp, String fileName) {
 		Connection connection;
 		String sql = "UPDATE log SET state=?, result=?, dateLoadToStaging=? WHERE fileName=?";
 		try {
-			connection = DBConnection.getConnection("controldb");
+//			connection = DBConnection.getConnection("controldb");
+			connection = DBConnection.getConSQL("controldb");
+
 			PreparedStatement ps1 = connection.prepareStatement(sql);
 			ps1.setString(1, status);
 			ps1.setString(2, result);
@@ -267,55 +196,79 @@ public class ControlDB {
 		}
 	}
 
-//	// Tao bang:
-//	public boolean createTable(String table_name, String variables, String column_list) throws ClassNotFoundException {
-//		sql = "CREATE TABLE " + table_name + " (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,";
-//		String[] vari = variables.split(",");
-//		String[] col = column_list.split(",");
-//		for (int i = 0; i < vari.length; i++) {
-//			sql += col[i] + " " + vari[i] + " NOT NULL,";
-//		}
-//		sql = sql.substring(0, sql.length() - 1) + ")";
-//		System.out.println(sql);
+	// Phương thức xóa bảng khi đã load từ datastaging sang datawarehouse thành
+	// công
+
+//	public void truncateTable(String db_name, String table_name) {
+//		String sql;
+//		Connection connection = null;
+//		PreparedStatement pst = null;
 //		try {
-//			pst = DBConnection.getConnection(this.target_db_name).prepareStatement(sql);
+//			sql = "TRUNCATE " + table_name;
+////			connection = DBConnection.getConnection(db_name);
+//			connection = DBConnection.getConSQL(db_name);
+//			pst = connection.prepareStatement(sql);
 //			pst.executeUpdate();
-//			return true;
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			return false;
+//		} catch (SQLException e1) {
+//			e1.printStackTrace();
 //		} finally {
 //			try {
 //				if (pst != null)
 //					pst.close();
-//				if (rs != null)
-//					rs.close();
+//				if (connection != null)
+//					connection.close();
 //			} catch (SQLException e) {
 //				e.printStackTrace();
 //			}
-//
 //		}
 //	}
 
-	// Sua:
-	// Phuong thuc loadInFile() load file vao trong table:
-	public int loadInFile(String sourceFile, String targetTable, String delimeter) throws SQLException {
-		sql = "LOAD DATA LOCAL INFILE '" + sourceFile + "' INTO TABLE " + targetTable + "\r\n"
-				+ "FIELDS TERMINATED BY '" + delimeter + "' \r\n" + "ENCLOSED BY '\"' \r\n"
-				+ "LINES TERMINATED BY '\r\n'";
-		Connection conn = DBConnection.getConnection(this.target_db_name);
-		PreparedStatement pst = conn.prepareStatement(sql);
-		System.out.println("LOAD DATA LOCAL INFILE '" + sourceFile + "' INTO TABLE " + targetTable + "\r\n"
-				+ "FIELDS TERMINATED BY '" + delimeter + "' \r\n" + "LINES TERMINATED BY '\\n'" + " IGNORE 1 ROWS");
-		return pst.executeUpdate();
+	// Phương thức chọn tất cả các trường có trong table ở database staging
+//	public static ResultSet selectAllField(String db_name, String table_name) {
+//		String sql = "";
+//		ResultSet rs = null;
+//		try {
+//			sql = "select * from " + table_name;
+////			Connection conn = DBConnection.getConnection("controldb");
+//			Connection conn = DBConnection.getConSQL("controldb");
+//			PreparedStatement ps = conn.prepareStatement(sql);
+//			rs = ps.executeQuery();
+//			return rs;
+//		} catch (SQLException e) {
+//			return null;
+//		}
+//	}
 
-	}
+	// Phương thức chèn giá trị vào datawarehouse
+//	public void insertValuesToWareHouse(String value) {
+//		String colum_list = "(stt,mssv,firstname,lastname,dob,classid,classname,sdt,email,address,note)";
+//		PreparedStatement ps = null;
+//		try {
+//			String sql = "INSERT INTO STUDENT" + colum_list + " VALUES " + value;
+////			Connection conn = DBConnection.getConnection("controldb");
+//			Connection conn = DBConnection.getConSQL("controldb");
+//			ps = conn.prepareStatement(sql);
+//			ps.executeUpdate();
+//		} catch (SQLException e) {
+//
+//		} finally {
+//			if (ps != null) {
+//				try {
+//					ps.close();
+//				} catch (SQLException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//	}
 
-	// Sua:
+	// Hàm main này để test các phương thức trên chạy ổn hay chưa:
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		ControlDB cb = new ControlDB("database_staging");
-		Log log = cb.getLogsWithStatus("ER");
-		System.out.println(log.toString());
+		ControlDB cb = new ControlDB("controldb");
+		Config con = cb.loadAllConfs(1);
+		System.out.println(con.toString());
+
 	}
 
 }

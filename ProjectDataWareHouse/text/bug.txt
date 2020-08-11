@@ -1,2 +1,30 @@
-NOTICE: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES) 
-TIME: Fri Jul 10 18:27:49 ICT 2020
+NOTICE: ChilkatLog:
+  Connect_Ssh:
+    DllDate: Jun 28 2020
+    ChilkatVersion: 9.5.0.83
+    UnlockPrefix: Hi
+    Architecture: Little Endian; 64-bit
+    Language: Windows Java
+    VerboseLogging: 0
+    Component successfully unlocked using trial key
+    connectInner:
+      hostname: drive.ecepvn.org
+      port: 2227
+      sshConnect:
+        connectSocket:
+          connect_ipv6_or_ipv4:
+            Connection attempt failed.
+            maxWaitTimeMs: 30000
+            totalMsWaitedSoFar: 18300
+          --connect_ipv6_or_ipv4
+        --connectSocket
+        Failed to establish initial TCP/IP connection
+        hostname: drive.ecepvn.org
+        port: 2227
+      --sshConnect
+    --connectInner
+    Failed.
+  --Connect_Ssh
+--ChilkatLog
+
+TIME: Mon Aug 03 20:29:37 ICT 2020
