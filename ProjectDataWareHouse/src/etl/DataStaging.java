@@ -8,12 +8,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.mail.MessagingException;
@@ -30,9 +28,6 @@ import log.Log;
 import modal.SendMail;
 
 public class DataStaging {
-	// static final String EXT_TEXT = ".txt";
-	// static final String EXT_CSV = ".csv";
-	// static final String EXT_EXCEL = ".xlsx";
 	private int config_id;
 	private String state;
 
