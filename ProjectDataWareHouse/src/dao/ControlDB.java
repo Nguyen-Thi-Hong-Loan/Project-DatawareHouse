@@ -109,7 +109,7 @@ public class ControlDB {
 			log.setIdConfig(rs.getInt("idConfig"));
 			log.setState(rs.getString("state"));
 			log.setResult(rs.getString("result"));
-			log.setNumColumn(rs.getInt("numColumn"));
+			log.setNumColumn(rs.getInt("numRow"));
 			log.setFileName(rs.getString("fileName"));
 		}
 		return log;
