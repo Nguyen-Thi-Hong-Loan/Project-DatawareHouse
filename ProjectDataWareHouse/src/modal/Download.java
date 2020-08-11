@@ -49,8 +49,10 @@ public class Download {
 		CkGlobal ck = new CkGlobal();
 		ck.UnlockBundle("Hi");
 
-		// Connect to an SSH server:
+		// Connect to an SSH server with  server address and port
 		boolean success = ssh.Connect(serverAddress, port);
+		
+		//check success 
 		if (!success) {
 			// viet bug vao file va send mail
 			haveANotice(ssh.lastErrorText() + "", 1);
@@ -113,10 +115,10 @@ public class Download {
 			// khoi tao loi goi thuc thi thu tuc
 			String sql = "{call sp_loadConfig (?)}";
 			cstm = conn.prepareCall(sql);
+			
 			// Set parameter values
 			cstm.setInt(1, id);
 			ResultSet rs = cstm.executeQuery();
-			System.out.println("runnnnnnnnnnnnnn");
 			if (rs.next()) {
 				Config conf = new Config();
 				conf.setIdConf(rs.getInt("idConfig"));
@@ -133,12 +135,11 @@ public class Download {
 
 				boolean download = new Download().download(conf.getDirSou(), "/volume1/ECEP/song.nguyen/DW_2020/data",
 						conf.getServerSou(), conf.getPort(), conf.getUserSou(), conf.getPassSou(), conf.getFormatSou());
-				System.out.println(download + "lllllllllllllll");
+
 				if (download) {
 					List<String> lsFile = readLsFile(conf.getDirSou());
 					System.out.println(lsFile);
 					for (String fName : lsFile) {
-						System.out.println("================" + fName);
 						String fileName = conf.getDirSou() + "\\" + "\\" + fName;
 						int numColumn = (fileName.endsWith(".txt")) ? countLineTxt(fileName)
 								: (fileName.endsWith(".xlsx") ? numColumn = countFExcel(fileName) : 0);
@@ -170,15 +171,13 @@ public class Download {
 			Connection conn = DBConnection.getConSQL(db);
 			String sql = "{call sp_insertLog (?,?,?)}";
 			CallableStatement cstm = conn.prepareCall(sql);
+			
 			// Set parameter values
 			cstm.setString(1, name);
 			cstm.setInt(2, num);
 			cstm.setInt(3, idCf);
-			System.out.println(cstm.execute());
-
+			cstm.execute();
 			System.out.println("ghi log thanh cong");
-//			haveANotice("ghi log thanh cong", 2);
-
 			cstm.close();
 			conn.close();
 		} catch (Exception e) {
@@ -202,8 +201,6 @@ public class Download {
 	}
 
 	public static void haveANotice(String mess, int i) {
-//		WriteBug wb = new WriteBug();
-//		wb.writeBug(erorr, i);
 		String sendMess = "TIME: " + new Date() + "\n" + mess;
 
 		if (i == 1) {
@@ -241,6 +238,7 @@ public class Download {
 		return count;
 	}
 
+	//count line in file .txt
 	public static int countLineTxt(String s_file) {
 		try {
 

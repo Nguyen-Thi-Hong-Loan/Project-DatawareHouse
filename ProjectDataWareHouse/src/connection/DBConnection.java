@@ -4,17 +4,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import control.Config;
-import dao.ControlDB;
-import log.Log;
-import modal.SendMail;
-import modal.WriteBug;
 
 public class DBConnection {
 	// Phương thức tạo kết nối với databse:
