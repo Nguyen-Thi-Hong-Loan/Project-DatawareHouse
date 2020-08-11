@@ -119,6 +119,7 @@ public class Download {
 			// Set parameter values
 			cstm.setInt(1, id);
 			ResultSet rs = cstm.executeQuery();
+			
 			if (rs.next()) {
 				Config conf = new Config();
 				conf.setIdConf(rs.getInt("idConfig"));
@@ -136,16 +137,19 @@ public class Download {
 				boolean download = new Download().download(conf.getDirSou(), "/volume1/ECEP/song.nguyen/DW_2020/data",
 						conf.getServerSou(), conf.getPort(), conf.getUserSou(), conf.getPassSou(), conf.getFormatSou());
 
+				//kiem tra download co thanh cong ko de viet log
 				if (download) {
+					//lay ra ds lisst file trong local
 					List<String> lsFile = readLsFile(conf.getDirSou());
-					System.out.println(lsFile);
 					for (String fName : lsFile) {
 						String fileName = conf.getDirSou() + "\\" + "\\" + fName;
 						int numColumn = (fileName.endsWith(".txt")) ? countLineTxt(fileName)
 								: (fileName.endsWith(".xlsx") ? numColumn = countFExcel(fileName) : 0);
+						//viet vao file log
 						loadLog(fName, numColumn, id, "controldb");
 
 					}
+					//hoan thanh xong thi gui mail thanh cong
 					haveANotice("SUCCESS", 2);
 				}
 
@@ -166,6 +170,7 @@ public class Download {
 
 	}
 
+	//thuc hien viet log
 	public static void loadLog(String name, int num, int idCf, String db) {
 		try {
 			Connection conn = DBConnection.getConSQL(db);
@@ -200,6 +205,8 @@ public class Download {
 
 	}
 
+	
+	//thong bao loi va gui mail
 	public static void haveANotice(String mess, int i) {
 		String sendMess = "TIME: " + new Date() + "\n" + mess;
 
@@ -271,6 +278,7 @@ public class Download {
 		return 0;
 	}
 
+	//main chay download file
 	public void mainSCP(int id_config) throws AddressException, MessagingException {
 		Download download = new Download();
 		download.saveDataFromFTPToLocal(id_config);
