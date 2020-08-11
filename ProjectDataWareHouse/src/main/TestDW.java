@@ -15,6 +15,7 @@ public class TestDW {
 		String[] listIdConfig = args.clone();
 
 		System.out.println("Run my job: " + new Date());
+		
 		Download scpObject = new Download();
 		DataStaging dw = new DataStaging();
 		for (int i = 0; i < listIdConfig.length; i++) {
