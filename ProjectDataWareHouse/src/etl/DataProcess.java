@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -209,45 +210,102 @@ public class DataProcess {
 		return false;
 	}
 	// Ghi dữ liệu từ datastaging và datawarehouse:
-//		public void writeDataToWareHouse(ResultSet rs) {
-//			try {
-//				while (rs.next()) {
-//					String stt = rs.getString("stt");
-//					String mssv = rs.getString("mssv");
-//					String ho = rs.getString("firstname");
-//					String ten = rs.getString("lastname");
-//					String ngay_sinh = rs.getString("dob");
-//					String ma_lop = rs.getString("classid");
-//					String ten_lop = rs.getString("classname");
-//					String sdt = rs.getString("sdt");
-//					String email = rs.getString("email");
-//					String que_quan = rs.getString("address");
-//					String note = rs.getString("note");
-//					String value = "('" + mssv + "','" + ho + "','" + ten + "','" + ngay_sinh + "','" + ma_lop + "','"
-//							+ ten_lop + "','" + sdt + "','" + email + "','" + que_quan + "','" + note + "')";
-//					// insert into student values('18130002','Lưu
-//					// Văn','An','2020-01-01','DH18DTC','CÔNG NGHỆ THÔNG
-//					// TIN','0879234555','18130002@st.hcmuaf.edu.vn','Vũng
-//					// Tàu','N/A')
-//					// ('18130002','Lưu Văn','An','2020-01-01','DH18DTC','CÔNG NGHỆ
-//					// THÔNG TIN','0879234555','18130002@st.hcmuaf.edu.vn','Vũng
-//					// Tàu','N/A)
-//					cdb.insertValuesToWareHouse(value);
-//
-//				}
-//				cdb.truncateTable("database_staging", "student");
-//			} catch (SQLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} finally {
-//				// try {
-//				// rs.close();
-//				// } catch (SQLException e) {
-//				// // TODO Auto-generated catch block
-//				// e.printStackTrace();
-//				// }
-//			}
-//		}
+		public void writeDataToWareHouse(ResultSet rs, String target_table, int idlog) {
+			try {
+				if (rs == null)
+					return;
+				if (target_table.equals("sinhvien")) {
+					while (rs.next()) {
+						try {
+							String sql = "{call INSERT_SINHVIEN (?,?,?,?,?,?,?,?,?,?,?)}";
+							Connection con = DBConnection.getConnection("database_warehouse");
+							CallableStatement cst = con.prepareCall(sql);
+							cst.setString(1, rs.getString("mssv"));
+							cst.setString(2, rs.getString("firstname"));
+							cst.setString(3, rs.getString("lastname"));
+							cst.setString(4, rs.getString("dob"));
+							cst.setString(5, rs.getString("classid"));
+							cst.setString(6, rs.getString("classname"));
+							cst.setString(7, rs.getString("sdt"));
+							cst.setString(8, rs.getString("email"));
+							cst.setString(9, rs.getString("address"));
+							cst.setString(10, rs.getString("note"));
+							cst.setInt(11, idlog);
+							cst.executeUpdate(); // insert,delete,update
+						} catch (SQLException e) {
+							continue;
+						}
+					}
+				} else if (target_table.equals("monhoc")) {
+					while (rs.next()) {
+						try {
+							// IN STT_IN INT, IN MAMH VARCHAR ( 255 ),IN TENMH
+							// VARCHAR ( 255 ),IN TINCHI TINYINT,IN KHOAQL VARCHAR(255),IN KHOASD
+							// VARCHAR(255), IN ID_LOG INT
+							String sql = "{call INSERT_MONHOC (?,?,?,?,?,?,?)}";
+							Connection con = DBConnection.getConnection("database_warehouse");
+							CallableStatement cst = con.prepareCall(sql);
+							cst.setInt(1, rs.getInt("stt"));
+							cst.setString(2, rs.getString("mamh")); 
+							cst.setString(3, rs.getString("tenmh"));
+							cst.setInt(4, rs.getInt("tinchi"));
+							cst.setString(5, rs.getString("khoaquanly"));
+							cst.setString(6, rs.getString("khoasudung"));
+							cst.setInt(7, idlog);
+							cst.executeUpdate(); // insert,delete,update
+						} catch (SQLException e) {
+							continue;
+						}
+					}
+				} else if (target_table.equals("lophoc")) {
+					while (rs.next()) {
+						try {
+							// IN LOPHOCID VARCHAR ( 255 ), IN MAMH_IN VARCHAR ( 255 ), IN
+							// NAMHOC_IN INT, IN ID_LOG INT
+							String sql = "{call INSERT_LOPHOC (?,?,?,?)}";
+							Connection con = DBConnection.getConnection("database_warehouse");
+							CallableStatement cst = con.prepareCall(sql);
+							cst.setString(1, rs.getString("malophoc"));
+							cst.setString(2, rs.getString("mamh"));
+							cst.setString(3, rs.getString("namhoc"));
+							cst.setInt(4, idlog);
+							cst.executeUpdate(); // insert,delete,update
+						} catch (SQLException e) {
+							continue;
+						}
+					}
+
+				} else if (target_table.equals("dangky")) {
+					while (rs.next()) {
+//						INSERT_DANGKY(IN MA_DANGKY VARCHAR ( 255 ),IN MA_SINHVIEN
+//						VARCHAR ( 255 ),IN MA_LOPHOC VARCHAR(255),IN NGAYDK VARCHAR(255), IN ID_LOG INT)
+						try {
+							String sql = "{call INSERT_DANGKY (?,?,?,?,?)}";
+							Connection con = DBConnection.getConnection("database_warehouse");
+							CallableStatement cst = con.prepareCall(sql);
+							cst.setString(1, rs.getString("madk"));
+							cst.setString(2, rs.getString("masv"));
+							cst.setString(3, rs.getString("malophoc"));
+							cst.setString(4, rs.getString("thoigian"));
+							cst.setInt(5, idlog);
+							cst.executeUpdate(); // insert,delete,update
+						} catch (SQLException e) {
+							continue;
+						}
+					}
+
+				}
+				cdb.truncateTable("database_staging", target_table);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
 	public void setConfig_db_name(String config_db_name) {
 		this.config_db_name = config_db_name;

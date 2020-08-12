@@ -199,69 +199,46 @@ public class ControlDB {
 	// Phương thức xóa bảng khi đã load từ datastaging sang datawarehouse thành
 	// công
 
-//	public void truncateTable(String db_name, String table_name) {
-//		String sql;
-//		Connection connection = null;
-//		PreparedStatement pst = null;
-//		try {
-//			sql = "TRUNCATE " + table_name;
-////			connection = DBConnection.getConnection(db_name);
-//			connection = DBConnection.getConSQL(db_name);
-//			pst = connection.prepareStatement(sql);
-//			pst.executeUpdate();
-//		} catch (SQLException e1) {
-//			e1.printStackTrace();
-//		} finally {
-//			try {
-//				if (pst != null)
-//					pst.close();
-//				if (connection != null)
-//					connection.close();
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//	}
+	public void truncateTable(String db_name, String table_name) {
+		String sql;
+		Connection connection = null;
+		PreparedStatement pst = null;
+		try {
+			sql = "TRUNCATE " + table_name;
+//			connection = DBConnection.getConnection(db_name);
+			connection = DBConnection.getConSQL(db_name);
+			pst = connection.prepareStatement(sql);
+			pst.executeUpdate();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		} finally {
+			try {
+				if (pst != null)
+					pst.close();
+				if (connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	// Phương thức chọn tất cả các trường có trong table ở database staging
-//	public static ResultSet selectAllField(String db_name, String table_name) {
-//		String sql = "";
-//		ResultSet rs = null;
-//		try {
-//			sql = "select * from " + table_name;
-////			Connection conn = DBConnection.getConnection("controldb");
-//			Connection conn = DBConnection.getConSQL("controldb");
-//			PreparedStatement ps = conn.prepareStatement(sql);
-//			rs = ps.executeQuery();
-//			return rs;
-//		} catch (SQLException e) {
-//			return null;
-//		}
-//	}
+	public static ResultSet selectAllField(String db_name, String table_name) {
+		String sql = "";
+		ResultSet rs = null;
+		try {
+			sql = "select * from " + table_name;
+//			Connection conn = DBConnection.getConnection("controldb");
+			Connection conn = DBConnection.getConSQL("controldb");
+			PreparedStatement ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			return rs;
+		} catch (SQLException e) {
+			return null;
+		}
+	}
 
-	// Phương thức chèn giá trị vào datawarehouse
-//	public void insertValuesToWareHouse(String value) {
-//		String colum_list = "(stt,mssv,firstname,lastname,dob,classid,classname,sdt,email,address,note)";
-//		PreparedStatement ps = null;
-//		try {
-//			String sql = "INSERT INTO STUDENT" + colum_list + " VALUES " + value;
-////			Connection conn = DBConnection.getConnection("controldb");
-//			Connection conn = DBConnection.getConSQL("controldb");
-//			ps = conn.prepareStatement(sql);
-//			ps.executeUpdate();
-//		} catch (SQLException e) {
-//
-//		} finally {
-//			if (ps != null) {
-//				try {
-//					ps.close();
-//				} catch (SQLException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//	}
 
 	// Hàm main này để test các phương thức trên chạy ổn hay chưa:
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {

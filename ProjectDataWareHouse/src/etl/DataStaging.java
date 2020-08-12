@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +26,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import control.Config;
 import dao.ControlDB;
 import log.Log;
+import modal.Download;
 import modal.SendMail;
 
 public class DataStaging {
@@ -63,6 +65,22 @@ public class DataStaging {
 
 	}
 
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		DataStaging ds = new DataStaging();
+		Download dow = new Download();
+		try {
+			// 1 sinhvien 2: monhoc 4: lophoc 3: dangky
+			dow.mainSCP(1);
+			ds.mainStaging(1);
+		} catch (AddressException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public void ExtractToDB(DataProcess dp) throws ClassNotFoundException, SQLException {
 		Config configuration = dp.getCdb().loadAllConfs(this.config_id);
 		// Lấy các trường trong một dòng config ra:
@@ -78,6 +96,7 @@ public class DataStaging {
 		System.out.println(import_dir);
 		// Lấy các trường có trong dòng log đầu tiên có state=ER;
 		Log log = dp.getCdb().getLogsWithStatus(this.state, this.config_id);
+		int idlog = log.getIdLog();
 		// Lấy file_name từ trong config ra
 		String file_name = log.getFileName();
 		// Ráp với importDir đề được cái đường dẫn tới file
@@ -121,22 +140,20 @@ public class DataStaging {
 					// nếu mình ghi được dữ liệu vô bảng
 					if (dp.writeDataToBD(column_list, target_table, values)) {
 						// Move to warehouse
-						// Chon tat ca cac dong trong table
-						// student(db_staging) -> luu vao doi tuong
-						// ResultSet
+						// Chon tat ca cac dong trong table target_table(db_staging) -> luu vao doi
+						// tuong ResultSet
+						ResultSet allRecored = ControlDB.selectAllField("database_staging", target_table);
+						// Load data tu staging sang warehouse dung` Procedure
+						dp.writeDataToWareHouse(allRecored, target_table, idlog);
 
-//								ResultSet allRecored = ControlDB.selectAllField("database_staging", target_table);
-//								dp.writeDataToWareHouse(allRecored);
-
-						file_status = "TR";
-						result = "OK";
+						file_status = "SU";
+						result = "COMPLETE";
 						// update cái log lại, chuyển file đã extract
 						// xong
 						// vào thư mục success
 						dp.getCdb().updateLogAfterLoadToStaging(file_status, result, timestamp, file_name);
 						target_dir = configuration.getSuccessDir();
-						// if (moveFile(target_dir, file))
-						// ;
+						moveFile(target_dir, file);
 
 					} else {
 						// Nếu mà bị lỗi thì update log là state=Not TR
